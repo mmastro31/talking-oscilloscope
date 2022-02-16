@@ -7,6 +7,6 @@ setup(name='talking-oscilloscope',
     author_email='mm9587@nyu.edu',
     url='https://github.com/mmastro31/talking-oscilloscope',
     install_requires=[],
-    py_modules= []
+    py_modules= ['oscilloscope']
     )
 
