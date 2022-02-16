@@ -1,6 +1,7 @@
 
 
 
+
 #I2S Stereo Decoder
 
 def soundOut():
@@ -15,14 +16,27 @@ def setupSound():
 def setupCurrentSensor():
     pass
 
+def measureCurrent():
+    pass
+
+
 
 #Motors / H-Bridge
 
-def buzzMotor(motorNumber):
+def buzzMotor():
+    pass
+
+def setupMotor():
+    pass
+
+def getMotorState():
     pass
 
 
 #TFT LCD Display
+
+def setupDisplay():
+    pass
 
 
 
