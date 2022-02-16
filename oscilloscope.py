@@ -20,7 +20,6 @@ def measureCurrent():
     pass
 
 
-
 #Motors / H-Bridge
 
 def buzzMotor():
@@ -32,17 +31,25 @@ def setupMotor():
 def getMotorState():
     pass
 
+def stopMotor():
+    pass
 
 #TFT LCD Display
 
 def setupDisplay():
     pass
 
+def displayOff():
+    pass
 
+def printDisplay():
+    pass
 
 
 #Buttons
 
-def is_pressed():
+def getButtonState():
     pass
 
+def setupButton():
+    pass
