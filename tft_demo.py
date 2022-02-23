@@ -2,11 +2,6 @@
 #Demo file:
 #prints an image of a snake onto the tft 1.8" lcd
 
-# Turn on the Backlight
-backlight = DigitalInOut(board.D26)
-backlight.switch_to_output()
-backlight.value = True
-
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
@@ -30,6 +25,12 @@ from adafruit_rgb_display import st7735  # pylint: disable=unused-import
 from adafruit_rgb_display import ssd1351  # pylint: disable=unused-import
 from adafruit_rgb_display import ssd1331  # pylint: disable=unused-import
 
+
+# Turn on the Backlight
+backlight = digitalio.DigitalInOut(board.D25)
+backlight.switch_to_output()
+backlight.value = True
+
 # Configuration for CS and DC pins (these are PiTFT defaults):
 cs_pin = digitalio.DigitalInOut(board.CE0)
 dc_pin = digitalio.DigitalInOut(board.D25)
@@ -47,7 +48,7 @@ spi = board.SPI()
 # disp = st7789.ST7789(spi, height=240, y_offset=80, rotation=180,  # 1.3", 1.54" ST7789
 # disp = st7789.ST7789(spi, rotation=90, width=135, height=240, x_offset=53, y_offset=40, # 1.14" ST7789
 # disp = hx8357.HX8357(spi, rotation=180,                           # 3.5" HX8357
-disp = st7735.ST7735R(spi, rotation=90,                           # 1.8" ST7735R
+disp = st7735.ST7735R(spi, rotation=270,                           # 1.8" ST7735R
 # disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3,   # 1.44" ST7735R
 # disp = st7735.ST7735R(spi, rotation=90, bgr=True,                 # 0.96" MiniTFT ST7735R
 # disp = ssd1351.SSD1351(spi, rotation=180,                         # 1.5" SSD1351
@@ -80,7 +81,7 @@ draw = ImageDraw.Draw(image)
 draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
 disp.image(image)
 
-image = Image.open("blinka.jpg")
+image = Image.open("blinka.JPG")
 
 # Scale the image to the smaller screen dimension
 image_ratio = image.width / image.height
