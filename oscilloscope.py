@@ -1,56 +1,76 @@
 
-
 #Parts Setup
 
 
-#I2S Stereo Decoder
+class Oscilloscope:
 
-def soundOut():
-    pass
-
-def setupSound():
-    pass
+    def __init__(self):
+        self.CurrentSensor = None
 
 
-#Current Sensor
 
-def setupCurrentSensor():
-    pass
+    #INA260 Current Sensor
 
-def measureCurrent():
-    pass
+    def setupCurrentSensor(self, bus, address=0x40):
+        self.CurrentSensor = adafruit_ina260.INA260(bus)
 
 
-#Motors / H-Bridge
+    def measureCurrent(self):
+        current = self.CurrentSensor.current
+        return current 
 
-def buzzMotor():
-    pass
+    def measureVoltage(self):
+        voltage = self.CurrentSensor.voltage
+        return voltage
 
-def setupMotor():
-    pass
+    def measurePower(self):
+        power = self.CurrentSensor.power
+        return power
 
-def getMotorState():
-    pass
+    def changeCurrentSensorMode(self,num):
+        pass
+    
+    def changeCurrentSensorAverage(self,count):
+        pass
 
-def stopMotor():
-    pass
+    #I2S Stereo Decoder
 
-#TFT LCD Display
+    def soundOut():
+        pass
 
-def setupDisplay():
-    pass
+    def setupSound():
+        pass
 
-def displayOff():
-    pass
+    #Motors / H-Bridge
 
-def printDisplay():
-    pass
+    def buzzMotor():
+        pass
+
+    def setupMotor():
+        pass
+
+    def getMotorState():
+        pass
+
+    def stopMotor():
+        pass
+
+    #TFT LCD Display
+
+    def setupDisplay():
+        pass
+
+    def displayOff():
+        pass
+
+    def printDisplay():
+        pass
 
 
-#Buttons
+    #Buttons
 
-def getButtonState():
-    pass
+    def getButtonState():
+        pass
 
-def setupButton():
-    pass
+    def setupButton():
+        pass
