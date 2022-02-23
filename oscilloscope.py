@@ -1,4 +1,3 @@
-#Parts Setup
 import adafruit_ina260
 import board
 
