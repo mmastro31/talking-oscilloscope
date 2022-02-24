@@ -29,7 +29,7 @@ class Oscilloscope:
 
     def setupCurrentSensor(self, bus, address=0x40):
         self.CurrentSensor = adafruit_ina260.INA260(bus)
-        self.CurentSensor.reset_bit = 1
+        self.CurrentSensor.reset_bit = 1
         self.CurrentSensor.mode = adafruit_ina260.Mode.CONTINUOUS
         self.CurrentSensor.averaging_count = adafruit_ina260.AveragingCount.COUNT_4
         self.CurrentSensor.voltage_conversion_time = adafruit_ina260.ConversionTime.TIME_588_us
