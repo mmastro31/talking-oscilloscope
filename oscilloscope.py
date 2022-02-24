@@ -1,5 +1,6 @@
 import adafruit_ina260
 import board
+import busio
 
 class Oscilloscope:
 
@@ -8,27 +9,50 @@ class Oscilloscope:
 
     #INA260 Current Sensor
 
+    count_dict = {0: adafruit_ina260.AveragingCount.COUNT_1,
+                1: adafruit_ina260.AveragingCount.COUNT_4, 
+                2: adafruit_ina260.AveragingCount.COUNT_16,
+                3: adafruit_ina260.AveragingCount.COUNT_64,
+                4: adafruit_ina260.AveragingCount.COUNT_128,
+                5: adafruit_ina260.AveragingCount.COUNT_256,
+                6: adafruit_ina260.AveragingCount.COUNT_512,
+                7: adafruit_ina260.AveragingCount.COUNT_1024}
+    conv_dict = {0: adafruit_ina260.ConversionTime.TIME_140_us,
+            1: adafruit_ina260.ConversionTime.TIME_204_us,
+            2: adafruit_ina260.ConversionTime.TIME_332_us,
+            3: adafruit_ina260.ConversionTime.TIME_588_us,
+            4: adafruit_ina260.ConversionTime.TIME_1_1_ms,
+            5: adafruit_ina260.ConversionTime.TIME_2_116_ms,
+            6: adafruit_ina260.ConversionTime.TIME_4_156_ms,
+            7: adafruit_ina260.ConversionTime.TIME_8_244_ms,
+        }
+
     def setupCurrentSensor(self, bus, address=0x40):
         self.CurrentSensor = adafruit_ina260.INA260(bus)
         self.CurentSensor.reset_bit = 1
         self.CurrentSensor.mode = adafruit_ina260.Mode.CONTINUOUS
+        self.CurrentSensor.averaging_count = adafruit_ina260.AveragingCount.COUNT_4
+        self.CurrentSensor.voltage_conversion_time = adafruit_ina260.ConversionTime.TIME_588_us
+        self.CurrentSensor.current_conversion_time = adafruit_ina260.ConversionTime.TIME_588_us
 
 
     def measureCurrent(self):
+        #measure current with sensor
         current = self.CurrentSensor.current
-        print(current)
+        print("Current: %.2f " %(current) + "mA")
         return current 
 
     def measureVoltage(self):
+        #measure voltage with sensor
         voltage = self.CurrentSensor.voltage
-        print(voltage)
+        print("Voltage: %.2f " %(voltage) + "V")
         return voltage
 
     def measurePower(self):
+        #measure power with sensor
         power = self.CurrentSensor.power
-        print(power)
+        print("Power: %.2f " %(power) + "mW")
         return power
-
 
     def changeCurrentSensorMode(self,num):
         #Change Mode Current Sensor is operating in
@@ -44,9 +68,26 @@ class Oscilloscope:
         else:
             print("Incorrect input. Please select 0, 1, or 2")
     
-    def changeCurrentSensorAverage(self,count):
-        #Possible average counts: 1,4,16,64,128,256,512,1024
-        pass
+    def currentSensorCount(self,num):
+        #Dictionary is above.
+        #0-7 correspond to count
+        #invalid if other number
+        if num < 0 or num > 7:
+            print('invalid index. Please select 0-7')
+        else:
+            newCount = self.count_dict[num]
+            self.CurrentSensor.averaging_count = newCount
+        
+    def currentSensorTiming(self,num):
+        #Dictionary is above. (conv_dict)
+        #0-7 corresponds to conversion time
+        #invalid if other number
+        if num < 0 or num > 7:
+            print('invalid index number. Please select 0-7')
+        else:
+            newTime = self.conv_dict[num]
+            self.CurrentSensor.voltage_conversion_time = newTime
+            self.CurrentSensor.current_conversion_time = newTime
 
     #I2S Stereo Decoder
 
