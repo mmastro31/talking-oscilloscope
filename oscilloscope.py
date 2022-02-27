@@ -1,12 +1,10 @@
 import adafruit_ina260
 import board
 import busio
-<<<<<<< Updated upstream
 import time
-=======
 from PIL import Image, ImageDraw
 from adafruit_rgb_display import st7735
->>>>>>> Stashed changes
+
 
 class Oscilloscope:
 
