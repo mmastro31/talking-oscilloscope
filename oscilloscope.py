@@ -1,6 +1,7 @@
 import adafruit_ina260
 import board
 import busio
+import time
 
 class Oscilloscope:
 
@@ -39,19 +40,19 @@ class Oscilloscope:
     def measureCurrent(self):
         #measure current with sensor
         current = self.CurrentSensor.current
-        print("Current: %.2f " %(current) + "mA")
+        #print("Current: %.2f " %(current) + "mA")
         return current 
 
     def measureVoltage(self):
         #measure voltage with sensor
         voltage = self.CurrentSensor.voltage
-        print("Voltage: %.2f " %(voltage) + "V")
+        #print("Voltage: %.2f " %(voltage) + "V")
         return voltage
 
     def measurePower(self):
         #measure power with sensor
         power = self.CurrentSensor.power
-        print("Power: %.2f " %(power) + "mW")
+        #print("Power: %.2f " %(power) + "mW")
         return power
 
     def changeCurrentSensorMode(self,num):
