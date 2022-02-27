@@ -2,7 +2,7 @@ from xml.etree.ElementTree import TreeBuilder
 import oscilloscope
 
 #INA260 Current Sensor
-def currentSensorTest():
+def currentSensorTest(Oscilloscope,i2c):
     Oscilloscope.setupCurrentSensor(i2c,0x40)
     print('Setup Complete. Continuously measuring current, voltage and power.')
     
@@ -26,8 +26,8 @@ def main():
     Oscilloscope = oscilloscope.Oscilloscope()
     i2c = board.I2C()
     #current sensor test
-    currentSensorTest()
-    
+    currentSensorTest(Oscilloscope,i2c)
+
 
 
 if __name__ == '__main__':
