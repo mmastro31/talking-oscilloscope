@@ -1,13 +1,8 @@
 from xml.etree.ElementTree import TreeBuilder
 import oscilloscope
 
-
-Oscilloscope = oscilloscope.Oscilloscope()
-
-
 #INA260 Current Sensor
 def currentSensorTest():
-    i2c = board.I2C()
     Oscilloscope.setupCurrentSensor(i2c,0x40)
     print('Setup Complete. Continuously measuring current, voltage and power.')
     
@@ -24,3 +19,16 @@ def currentSensorTest():
     #Put Oscilloscope into shutdown mode
     Oscilloscope.changeCurrentSensorMode(2)
     print('Oscilloscope shutdown.')
+
+
+
+def main():
+    Oscilloscope = oscilloscope.Oscilloscope()
+    i2c = board.I2C()
+    #current sensor test
+    currentSensorTest()
+    
+
+
+if __name__ == '__main__':
+    main()
