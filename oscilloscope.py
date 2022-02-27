@@ -1,7 +1,12 @@
 import adafruit_ina260
 import board
 import busio
+<<<<<<< Updated upstream
 import time
+=======
+from PIL import Image, ImageDraw
+from adafruit_rgb_display import st7735
+>>>>>>> Stashed changes
 
 class Oscilloscope:
 
@@ -115,14 +120,109 @@ class Oscilloscope:
     #TFT LCD Display
 
     def setupDisplay():
-        pass
+    # Turn on the Backlight
+        backlight = digitalio.DigitalInOut(board.D25)
+        backlight.switch_to_output()
+        backlight.value = True
+
+        # Configuration for CS and DC pins (these are PiTFT defaults):
+        cs_pin = digitalio.DigitalInOut(board.CE0)
+        dc_pin = digitalio.DigitalInOut(board.D25)
+        reset_pin = digitalio.DigitalInOut(board.D24)
+
+        # Config for display baudrate (default max is 24mhz):
+        BAUDRATE = 24000000
+
+        # Setup SPI bus using hardware SPI:
+        spi = board.SPI()
+
+        # Create the display:
+        disp = st7735.ST7735R(spi, rotation=270, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE, )
+
+
+        # Create blank image for drawing.
+        # Make sure to create image with mode 'RGB' for full color.
+        if disp.rotation % 180 == 90:
+            height = disp.width  # we swap height/width to rotate it to landscape!
+            width = disp.height
+        else:
+            width = disp.width  # we swap height/width to rotate it to landscape!
+            height = disp.height
 
     def displayOff():
-        pass
+        # Turn on the Backlight
+        backlight = digitalio.DigitalInOut(board.D25)
+        backlight.switch_to_output()
+        backlight.value = False
 
-    def printDisplay():
-        pass
+    def displayImage():
+        image = Image.new("RGB", (width, height))
 
+        # Get drawing object to draw on image.
+        draw = ImageDraw.Draw(image)
+
+        # Draw a black filled box to clear the image.
+        draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
+        disp.image(image)
+
+        image = Image.open("blinka.JPG")
+
+        # Scale the image to the smaller screen dimension
+        image_ratio = image.width / image.height
+        screen_ratio = width / height
+        if screen_ratio < image_ratio:
+            scaled_width = image.width * height // image.height
+            scaled_height = height
+        else:
+            scaled_width = width
+            scaled_height = image.height * width // image.width
+        image = image.resize((scaled_width, scaled_height), Image.BICUBIC)
+
+        # Crop and center the image
+        x = scaled_width // 2 - width // 2
+        y = scaled_height // 2 - height // 2
+        image = image.crop((x, y, x + width, y + height))
+
+        # Display image.
+        disp.image(image)
+
+    def displayText():
+        # First define some constants to allow easy resizing of shapes.
+        BORDER = 20
+        FONTSIZE = 24
+
+        image = Image.new("RGB", (width, height))
+
+        # Get drawing object to draw on image.
+        draw = ImageDraw.Draw(image)
+
+        # Draw a green filled box as the background
+        draw.rectangle((0, 0, width, height), fill=(0, 255, 0))
+        disp.image(image)
+
+        # Draw a smaller inner purple rectangle
+        draw.rectangle(
+            (BORDER, BORDER, width - BORDER - 1, height - BORDER - 1), fill=(170, 0, 136)
+        )
+
+        # Load a TTF Font
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
+
+        # Draw Some Text
+        text = "Hello World!"
+        (font_width, font_height) = font.getsize(text)
+        draw.text(
+            (width // 2 - font_width // 2, height // 2 - font_height // 2),
+            text,
+            font=font,
+            fill=(255, 255, 0),
+        )
+
+        # Display image.
+        disp.image(image)
+
+    def clearDisplay():
+        pass
 
     #Buttons
 
