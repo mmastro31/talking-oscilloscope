@@ -1,6 +1,7 @@
 from xml.etree.ElementTree import TreeBuilder
 import oscilloscope
 import board
+import time
 
 #INA260 Current Sensor
 def currentSensorTest(Oscilloscope,i2c):
