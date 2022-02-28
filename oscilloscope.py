@@ -1,8 +1,9 @@
 import adafruit_ina260
 import board
 import busio
+import digitalio
 import time
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from adafruit_rgb_display import st7735
 
 
@@ -11,7 +12,7 @@ class Oscilloscope:
     def __init__(self):
         self.CurrentSensor = None
 
-    #INA260 Current Sensor
+    #------------INA260 Current Sensor----------------
 
     count_dict = {0: adafruit_ina260.AveragingCount.COUNT_1,
                 1: adafruit_ina260.AveragingCount.COUNT_4, 
@@ -44,7 +45,7 @@ class Oscilloscope:
         #measure current with sensor
         current = self.CurrentSensor.current
         #print("Current: %.2f " %(current) + "mA")
-        return current 
+        return current
 
     def measureVoltage(self):
         #measure voltage with sensor
@@ -71,7 +72,7 @@ class Oscilloscope:
             self.CurrentSensor.mode = adafruit_ina260.Mode.SHUTDOWN
         else:
             print("Incorrect input. Please select 0, 1, or 2")
-    
+
     def currentSensorCount(self,num):
         #Dictionary is above.
         #0-7 correspond to count
@@ -81,7 +82,7 @@ class Oscilloscope:
         else:
             newCount = self.count_dict[num]
             self.CurrentSensor.averaging_count = newCount
-        
+
     def currentSensorTiming(self,num):
         #Dictionary is above. (conv_dict)
         #0-7 corresponds to conversion time
@@ -93,7 +94,7 @@ class Oscilloscope:
             self.CurrentSensor.voltage_conversion_time = newTime
             self.CurrentSensor.current_conversion_time = newTime
 
-    #I2S Stereo Decoder
+    #------------I2S Stereo Decoder---------------
 
     def soundOut():
         pass
@@ -101,7 +102,7 @@ class Oscilloscope:
     def setupSound():
         pass
 
-    #Motors / H-Bridge
+    #------------Motors/H-Bridge-------------------
 
     def buzzMotor():
         pass
@@ -115,10 +116,10 @@ class Oscilloscope:
     def stopMotor():
         pass
 
-    #TFT LCD Display
+    #-------------TFT LCD Display------------------
 
-    def setupDisplay():
-    # Turn on the Backlight
+    def setupDisplay(self,spi):
+        # Turn on the Backlight
         backlight = digitalio.DigitalInOut(board.D25)
         backlight.switch_to_output()
         backlight.value = True
@@ -130,9 +131,6 @@ class Oscilloscope:
 
         # Config for display baudrate (default max is 24mhz):
         BAUDRATE = 24000000
-
-        # Setup SPI bus using hardware SPI:
-        spi = board.SPI()
 
         # Create the display:
         disp = st7735.ST7735R(spi, rotation=270, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE, )
@@ -147,23 +145,34 @@ class Oscilloscope:
             width = disp.width  # we swap height/width to rotate it to landscape!
             height = disp.height
 
-    def displayOff():
-        # Turn on the Backlight
-        backlight = digitalio.DigitalInOut(board.D25)
-        backlight.switch_to_output()
-        backlight.value = False
-
-    def displayImage():
         image = Image.new("RGB", (width, height))
 
         # Get drawing object to draw on image.
         draw = ImageDraw.Draw(image)
 
-        # Draw a black filled box to clear the image.
+        return image,draw,disp,backlight,width,height
+
+    def clearDisplay(self,image,draw,disp,width,height):
         draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
         disp.image(image)
 
-        image = Image.open("blinka.JPG")
+    def displayOff(self,backlight):
+        # Turn off Backlight
+        backlight.value = False
+
+    def displayOn(self,backlight):
+        # Turn on Backlight
+        backlight.value = True
+
+    def displayImage(self,imageFile,image,draw,disp,width,height):
+        self.clearDisplay(image,draw,disp,width,height)
+
+        #Try to load in image but if filename doesnt exist, return
+        try:
+            image = Image.open(imageFile)
+        except:
+            print("---ERROR: ",imageFile," does not exist---")
+            return 1
 
         # Scale the image to the smaller screen dimension
         image_ratio = image.width / image.height
@@ -183,46 +192,32 @@ class Oscilloscope:
 
         # Display image.
         disp.image(image)
+        return 0
 
-    def displayText():
+    def displayText(self,text,image,draw,disp,width,height):
+        self.clearDisplay(image, draw, disp, width, height)
+
         # First define some constants to allow easy resizing of shapes.
-        BORDER = 20
-        FONTSIZE = 24
+        BORDER = 32
+        FONTSIZE = 18
 
-        image = Image.new("RGB", (width, height))
-
-        # Get drawing object to draw on image.
-        draw = ImageDraw.Draw(image)
-
-        # Draw a green filled box as the background
-        draw.rectangle((0, 0, width, height), fill=(0, 255, 0))
+        # Draw a black filled box as the background
+        # technically redundant as clearDisplay does the same thing
+        draw.rectangle((0, 0, width, height), fill=(0, 0, 0))
         disp.image(image)
-
-        # Draw a smaller inner purple rectangle
-        draw.rectangle(
-            (BORDER, BORDER, width - BORDER - 1, height - BORDER - 1), fill=(170, 0, 136)
-        )
 
         # Load a TTF Font
         font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
 
         # Draw Some Text
-        text = "Hello World!"
         (font_width, font_height) = font.getsize(text)
-        draw.text(
-            (width // 2 - font_width // 2, height // 2 - font_height // 2),
-            text,
-            font=font,
-            fill=(255, 255, 0),
-        )
+        draw.text((width // 2 - font_width // 2, height // 2 - font_height // 2),text,font=font,fill=(255, 255, 0),)
 
         # Display image.
         disp.image(image)
 
-    def clearDisplay():
-        pass
 
-    #Buttons
+    #-----------------Buttons---------------------
 
     def getButtonState():
         pass
