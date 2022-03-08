@@ -7,6 +7,7 @@ import time
 from PIL import Image, ImageDraw, ImageFont
 from adafruit_rgb_display import st7735
 import pygame as pg
+import RPi.GPIO as GPIO
 
 
 # Current Sensor Helper Classes
@@ -49,11 +50,27 @@ class ConversionTime:
 #Oscilloscope Class - Controls all Main Components 
 class Oscilloscope:
 
+
+    MOTOR_1_OUT = 22
+    MOTOR_2_OUT = 23
+    MOTOR_3_OUT = 24
+    MOTOR_4_OUT = 25
+    MOTOR_1and2_EN = 5
+    MOTOR_3and4_EN = 6
+    motorList = {
+        1: MOTOR_1_OUT,
+        2: MOTOR_2_OUT,
+        3: MOTOR_3_OUT,
+        4: MOTOR_4_OUT
+        }
+
+
     def __init__(self):
         #Current Sensor
         self.CurrentSensor = None
         #I2S Stereo Decoder
         self.mixer = None
+
 
     #------------INA260 Current Sensor----------------
     def setupCurrentSensor(self, bus, address=0x40):
@@ -85,8 +102,7 @@ class Oscilloscope:
 
 
     #------------I2S Stereo Decoder---------------
-
-    # initializes StereoDecoder class
+    # initializes StereoDecoder
     def setupSound(self):
         freq=44100
         bitsize=-16
@@ -136,22 +152,67 @@ class Oscilloscope:
     def stopSound(self):
         self.mixer.stop()
 
+
     #------------Motors-------------------
-
-    def buzzMotor(self,motorIndex):
-        pass
-
+    #Setup 4 Haptic Motors
+    #1 and 2 controlled on pin 5
+    #3 and 4 controlled on pin 6
     def setupMotors(self):
-        pass
+        GPIO.setmode(GPIO.BCM)
+        #Turn every motor output off just in case, and setup pin
+        #Motor 1
+        GPIO.setup(self.MOTOR_1_OUT,GPIO.OUT)
+        GPIO.output(self.MOTOR_1_OUT,GPIO.LOW)
+        #Motor 2
+        GPIO.setup(self.MOTOR_2_OUT,GPIO.OUT)
+        GPIO.output(self.MOTOR_2_OUT,GPIO.LOW)
+        #Motor 3
+        GPIO.setup(self.MOTOR_3_OUT,GPIO.OUT)
+        GPIO.output(self.MOTOR_3_OUT,GPIO.LOW)
+        #Motor 4
+        GPIO.setup(self.MOTOR_4_OUT,GPIO.OUT)
+        GPIO.output(self.MOTOR_4_OUT,GPIO.LOW)
+        #setup enables
+        GPIO.setup(self.MOTOR_1and2_EN,GPIO.OUT)
+        GPIO.setup(self.MOTOR_3and4_EN,GPIO.OUT)
+        GPIO.output(self.MOTOR_1and2_EN,GPIO.HIGH)
+        GPIO.output(self.MOTOR_3and4_EN,GPIO.HIGH)
 
-    def getMotorState(self,motorIndex):
-        pass
 
+    #Buzzes the selected motor for 3 seconds
+    def buzzMotor(self,motorIndex):
+        try:
+            currentMotor = self.motorList[motorIndex]
+        except IndexError:
+            print('invalid index')
+        GPIO.output(currentMotor,GPIO.HIGH)
+        time.sleep(3)  #arbitrary, can be changed later
+        GPIO.output(currentMotor,GPIO.LOW)
+
+    #turn motor on indefinitely
+    def motorOn(self,motorIndex):
+        try:
+            currentMotor = self.motorList[motorIndex]
+        except IndexError:
+            print('invalid index')
+        GPIO.output(currentMotor,GPIO.HIGH)
+
+    #Force stop one motor
     def stopMotor(self,motorIndex):
-        pass
+        try:
+            currentMotor = self.motorList[motorIndex]
+        except IndexError:
+            print('invalid index')
+        GPIO.output(currentMotor,GPIO.LOW)
 
-    def getMotorStates(self):
-        pass
+    #Force stop all motors
+    def stopMotors(self):
+        GPIO.output(self.MOTOR_1and2_EN,GPIO.LOW)
+        GPIO.output(self.MOTOR_3and4_EN,GPIO.LOW)
+        GPIO.output(self.MOTOR_4_OUT,GPIO.LOW)
+        GPIO.output(self.MOTOR_1_OUT,GPIO.LOW)
+        GPIO.output(self.MOTOR_2_OUT,GPIO.LOW)
+        GPIO.output(self.MOTOR_3_OUT,GPIO.LOW)
 
     #-------------TFT LCD Display------------------
 

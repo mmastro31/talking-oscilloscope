@@ -6,7 +6,7 @@ setup(name='talking-oscilloscope',
     author='mmastro31',
     author_email='mm9587@nyu.edu',
     url='https://github.com/mmastro31/talking-oscilloscope',
-    install_requires=['adafruit-circuitpython-ina260','adafruit-circuitpython-rgb-display','pillow','pygame'],
+    install_requires=['adafruit-circuitpython-ina260','adafruit-circuitpython-rgb-display','pillow','pygame','RPi.GPIO'],
     py_modules = ['oscilloscope']
     )
 
