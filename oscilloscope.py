@@ -2,43 +2,67 @@ import adafruit_ina260
 import board
 import busio
 import digitalio
+import os
 import time
 from PIL import Image, ImageDraw, ImageFont
 from adafruit_rgb_display import st7735
+import pygame as pg
 
 
+# Current Sensor Helper Classes
+
+#Different Current Sensor Modes
+class CurrentSensorMode:
+
+    CONTINUOUS = adafruit_ina260.Mode.CONTINUOUS
+    TRIGGERED = adafruit_ina260.Mode.TRIGGERED
+    SHUTDOWN = adafruit_ina260.Mode.SHUTDOWN
+
+#Current Sensor Number of Measurements
+class AveragingCount:
+
+    COUNT_1 =  adafruit_ina260.AveragingCount.COUNT_1
+    COUNT_4 =  adafruit_ina260.AveragingCount.COUNT_4
+    COUNT_16 = adafruit_ina260.AveragingCount.COUNT_16
+    COUNT_64 =  adafruit_ina260.AveragingCount.COUNT_64
+    COUNT_128 =  adafruit_ina260.AveragingCount.COUNT_128
+    COUNT_256 =  adafruit_ina260.AveragingCount.COUNT_256
+    COUNT_512 =  adafruit_ina260.AveragingCount.COUNT_512
+    COUNT_1024 =  adafruit_ina260.AveragingCount.COUNT_1024
+
+#Current Sensor Time for Conversion
+class ConversionTime:
+
+    TIME_140_us =  adafruit_ina260.ConversionTime.TIME_140_us
+    TIME_204_us =  adafruit_ina260.ConversionTime.TIME_204_us
+    TIME_332_us =  adafruit_ina260.ConversionTime.TIME_332_us
+    TIME_588_us = adafruit_ina260.ConversionTime.TIME_588_us
+    TIME_1_1_ms =  adafruit_ina260.ConversionTime.TIME_1_1_ms
+    TIME_2_116_ms =  adafruit_ina260.ConversionTime.TIME_2_116_ms
+    TIME_4_156_ms =  adafruit_ina260.ConversionTime.TIME_4_156_ms
+    TIME_8_244_ms =  adafruit_ina260.ConversionTime.TIME_8_244_ms
+
+
+
+
+
+#Oscilloscope Class - Controls all Main Components 
 class Oscilloscope:
 
     def __init__(self):
+        #Current Sensor
         self.CurrentSensor = None
+        #I2S Stereo Decoder
+        self.mixer = None
 
     #------------INA260 Current Sensor----------------
-
-    count_dict = {0: adafruit_ina260.AveragingCount.COUNT_1,
-                1: adafruit_ina260.AveragingCount.COUNT_4, 
-                2: adafruit_ina260.AveragingCount.COUNT_16,
-                3: adafruit_ina260.AveragingCount.COUNT_64,
-                4: adafruit_ina260.AveragingCount.COUNT_128,
-                5: adafruit_ina260.AveragingCount.COUNT_256,
-                6: adafruit_ina260.AveragingCount.COUNT_512,
-                7: adafruit_ina260.AveragingCount.COUNT_1024}
-    conv_dict = {0: adafruit_ina260.ConversionTime.TIME_140_us,
-            1: adafruit_ina260.ConversionTime.TIME_204_us,
-            2: adafruit_ina260.ConversionTime.TIME_332_us,
-            3: adafruit_ina260.ConversionTime.TIME_588_us,
-            4: adafruit_ina260.ConversionTime.TIME_1_1_ms,
-            5: adafruit_ina260.ConversionTime.TIME_2_116_ms,
-            6: adafruit_ina260.ConversionTime.TIME_4_156_ms,
-            7: adafruit_ina260.ConversionTime.TIME_8_244_ms,
-        }
-
     def setupCurrentSensor(self, bus, address=0x40):
         self.CurrentSensor = adafruit_ina260.INA260(bus)
         self.CurrentSensor.reset_bit = 1
-        self.CurrentSensor.mode = adafruit_ina260.Mode.CONTINUOUS
-        self.CurrentSensor.averaging_count = adafruit_ina260.AveragingCount.COUNT_4
-        self.CurrentSensor.voltage_conversion_time = adafruit_ina260.ConversionTime.TIME_588_us
-        self.CurrentSensor.current_conversion_time = adafruit_ina260.ConversionTime.TIME_588_us
+        self.CurrentSensor.mode = CurrentSensorMode.CONTINUOUS
+        self.CurrentSensor.averaging_count = AveragingCount.COUNT_4
+        self.CurrentSensor.voltage_conversion_time = ConversionTime.TIME_588_us
+        self.CurrentSensor.current_conversion_time = ConversionTime.TIME_588_us
 
 
     def measureCurrent(self):
@@ -59,61 +83,74 @@ class Oscilloscope:
         #print("Power: %.2f " %(power) + "mW")
         return power
 
-    def changeCurrentSensorMode(self,num):
-        #Change Mode Current Sensor is operating in
-        #0 = CONTINUOUS
-        #1 = TRIGGERED
-        #2 = SHUTDOWN
-        if num == 0:
-            self.CurrentSensor.mode = adafruit_ina260.Mode.CONTINUOUS
-        elif num == 1:
-            self.CurrentSensor.mode = adafruit_ina260.Mode.TRIGGERED
-        elif num ==2:
-            self.CurrentSensor.mode = adafruit_ina260.Mode.SHUTDOWN
-        else:
-            print("Incorrect input. Please select 0, 1, or 2")
-
-    def currentSensorCount(self,num):
-        #Dictionary is above.
-        #0-7 correspond to count
-        #invalid if other number
-        if num < 0 or num > 7:
-            print('invalid index. Please select 0-7')
-        else:
-            newCount = self.count_dict[num]
-            self.CurrentSensor.averaging_count = newCount
-
-    def currentSensorTiming(self,num):
-        #Dictionary is above. (conv_dict)
-        #0-7 corresponds to conversion time
-        #invalid if other number
-        if num < 0 or num > 7:
-            print('invalid index number. Please select 0-7')
-        else:
-            newTime = self.conv_dict[num]
-            self.CurrentSensor.voltage_conversion_time = newTime
-            self.CurrentSensor.current_conversion_time = newTime
 
     #------------I2S Stereo Decoder---------------
 
-    def soundOut():
+    # initializes StereoDecoder class
+    def setupSound(self):
+        freq=44100
+        bitsize=-16
+        channels=2
+        buffer=2048
+        self.mixer = pg.mixer
+        self.mixer.init(freq, bitsize, channels, buffer)
+        # default starting volume will be 20%
+        self.mixer.music.set_volume(0.2)
+
+    # queues up and starts audio
+    def playSound(self):
+        mp3s = []
+        for file in os.listdir("."):
+            if file.endswith(".mp3"):
+                mp3s.append(file)
+                
+        for x in mp3s:
+            try:
+                self.mixer.music.load(x)
+            except pg.error:
+                print("File {} not found! {}".format(x, pg.get_error()))
+                return
+            
+            self.mixer.music.play(-1)
+
+    # pauses any playing audio
+    def pauseSound(self):
+        if self.mixer.music.get_busy():
+            self.mixer.pause()
+            
+    # unpauses any paused audio
+    def unpauseSound(self):
+        self.mixer.unpause()
+
+    # increments volume, volume is a float between 0.0 and 1.0
+    def increaseVolume(self):
+        if self.mixer.music.get_volume() <= 0.9:
+            self.mixer.music.set_volume(self.mixer.music.get_volume() + 0.1)
+
+    # decrements volume, volume is a float between 0.0 and 1.0
+    def decreaseVolume(self):
+        if self.mixer.music.get_volume() >= 0.1:
+            self.mixer.music.set_volume(self.mixer.music.get_volume() - 0.1)
+        
+    # stops all audio
+    def stopSound(self):
+        self.mixer.stop()
+
+    #------------Motors-------------------
+
+    def buzzMotor(self,motorIndex):
         pass
 
-    def setupSound():
+    def setupMotors(self):
         pass
 
-    #------------Motors/H-Bridge-------------------
-
-    def buzzMotor():
+    def getMotorState(self,motorIndex):
         pass
 
-    def setupMotor():
+    def stopMotor(self,motorIndex):
         pass
 
-    def getMotorState():
-        pass
-
-    def stopMotor():
+    def getMotorStates(self):
         pass
 
     #-------------TFT LCD Display------------------

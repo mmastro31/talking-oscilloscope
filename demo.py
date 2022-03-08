@@ -23,7 +23,7 @@ def currentSensorTest(Oscilloscope,i2c):
         i+=1
 
     #Put Oscilloscope into shutdown mode
-    Oscilloscope.changeCurrentSensorMode(2)
+    Oscilloscope.CurrentSensor.mode = oscilloscope.CurrentSensorMode.SHUTDOWN
     print('Oscilloscope shutdown.')
 
 def tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,height):
