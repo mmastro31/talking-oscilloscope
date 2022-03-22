@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 from adafruit_rgb_display import st7735
 import pygame as pg
 import RPi.GPIO as GPIO
+import smbus
 
 
 # Current Sensor Helper Classes
@@ -315,10 +316,22 @@ class Oscilloscope:
         disp.image(image)
 
 
-    #-----------------Buttons---------------------
+    #-----------------Buttons/Multiplexer---------------------
 
-    def getButtonState():
+    def setupButtons(self):
         pass
 
-    def setupButton():
+    def getButtonState(self,buttonIndex):
         pass
+
+
+
+    #----------------Digital Input--------------------------
+
+
+    def setupDigitalPins(self):
+        pass
+
+    def readDigitalPins(self):
+        pass
+

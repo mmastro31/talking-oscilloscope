@@ -98,10 +98,47 @@ def tftDisplayTest(Oscilloscope, spi):
             value = False
     pass
 
+
+def audioTest(Oscilloscope):
+    Oscilloscope.setupSound()
+    Oscilloscope.playSound()
+    print("Pausing audio")
+    Oscilloscope.pauseSound()
+    time.sleep(5)
+    print("playing audio")
+    Oscilloscope.unpauseSound()
+    time.sleep(5)
+    Oscilloscope.increaseSound()
+    time.sleep(10)
+    Oscilloscope.stopSound()
+
+
+
+def motorTest(Oscilloscope):
+    Oscilloscope.setupMotors()
+    Oscilloscope.buzzMotor(1)
+    Oscilloscope.buzzMotor(2)
+    Oscilloscope.buzzMotor(3)
+    Oscilloscope.motorOn(2)
+    Oscilloscope.motorOn(1)
+    Oscilloscope.buzzMotor(4)
+    Oscilloscope.stopMotors()
+
+def digitalInputTest(Oscilloscope):
+    pass
+
+def buttonTest(Oscilloscope):
+    pass
+
 def mainMenu(Oscilloscope,i2c,spi):
     print("The following options are available:\n")
     print("   0 - Current Sensor\n")
     print("   1 - TFT Display\n")
+    print("   2 - Stereo Decoder\n")
+    print("   3 - Motors\n")
+    print("   4 - Digital Inputs\n")
+    print("   5 - Buttons / Physical UI\n")
+
     option = input("Please select one:")
     option.strip()
     if (option == "0"):  # current sensor test
@@ -114,6 +151,26 @@ def mainMenu(Oscilloscope,i2c,spi):
             tftDisplayTest(Oscilloscope, spi)
         except:
             print("---ERROR: No tft display detected---\n")
+    elif (option == "2"):  # Stereo Decoder
+        try:
+            audioTest(Oscilloscope)
+        except:
+            print("---ERROR: No Stereo Decoder detected ---\n")
+    elif (option == "3"):  # Motors 
+        try:
+            motorTest(Oscilloscope)
+        except:
+            print("---ERROR: No Motor detected---\n")
+    elif (option == "4"):  # Digital Inputs
+        try:
+            digitalInputTest(Oscilloscope)
+        except:
+            print("---ERROR: No Digital Inputs Detected---\n")
+    elif (option == "5"):  # Buttons / Physical UI
+        try:
+            buttonTest(Oscilloscope)
+        except:
+            print("---ERROR: No Buttons detected---\n")
     else:
         print("---ERROR: Not a valid option. Please select a number from the list---\n")
         mainMenu(Oscilloscope,i2c,spi)
