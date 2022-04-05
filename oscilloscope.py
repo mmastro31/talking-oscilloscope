@@ -45,9 +45,6 @@ class ConversionTime:
     TIME_8_244_ms =  adafruit_ina260.ConversionTime.TIME_8_244_ms
 
 
-
-
-
 #Oscilloscope Class - Controls all Main Components 
 class Oscilloscope:
 
@@ -64,6 +61,8 @@ class Oscilloscope:
         3: MOTOR_3_OUT,
         4: MOTOR_4_OUT
         }
+    DIO1 = 26
+    DIO2 = 16
 
 
     def __init__(self):
@@ -71,6 +70,7 @@ class Oscilloscope:
         self.CurrentSensor = None
         #I2S Stereo Decoder
         self.mixer = None
+        GPIO.setmode(GPIO.BCM)
 
 
     #------------INA260 Current Sensor----------------
@@ -159,7 +159,6 @@ class Oscilloscope:
     #1 and 2 controlled on pin 5
     #3 and 4 controlled on pin 6
     def setupMotors(self):
-        GPIO.setmode(GPIO.BCM)
         #Turn every motor output off just in case, and setup pin
         #Motor 1
         GPIO.setup(self.MOTOR_1_OUT,GPIO.OUT)
@@ -330,8 +329,12 @@ class Oscilloscope:
 
 
     def setupDigitalPins(self):
-        pass
+        GPIO.setup(self.DIO1, GPIO.IN)
+        GPIO.setup(self.DIO2, GPIO.IN)
 
-    def readDigitalPins(self):
-        pass
+    def readDigitalPin(self):
+        x = GPIO.input(self.DIO1)
+        y = GPIO.input(self.DIO2)
+        return (x,y)
+        
 
