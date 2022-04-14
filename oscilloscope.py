@@ -9,6 +9,8 @@ from adafruit_rgb_display import st7735
 import pygame as pg
 import RPi.GPIO as GPIO
 import smbus
+import pyttsx3
+
 
 
 # Current Sensor Helper Classes
@@ -114,21 +116,19 @@ class Oscilloscope:
         # default starting volume will be 20%
         self.mixer.music.set_volume(0.2)
 
+        engine = pyttsx3.init()
+
+
     # queues up and starts audio
-    def playSound(self):
-        mp3s = []
-        for file in os.listdir("."):
-            if file.endswith(".mp3"):
-                mp3s.append(file)
-                
-        for x in mp3s:
-            try:
-                self.mixer.music.load(x)
-            except pg.error:
-                print("File {} not found! {}".format(x, pg.get_error()))
-                return
+    def playSound(self, filename):
+
+        try:
+            self.mixer.music.load(filename)
+        except pg.error:
+            print("File {} not found! {}".format(filename, pg.get_error()))
+            return
             
-            self.mixer.music.play(-1)
+        self.mixer.music.play(-1)
 
     # pauses any playing audio
     def pauseSound(self):
@@ -138,6 +138,11 @@ class Oscilloscope:
     # unpauses any paused audio
     def unpauseSound(self):
         self.mixer.unpause()
+
+
+    def checkVolume(self):
+        return
+
 
     # increments volume, volume is a float between 0.0 and 1.0
     def increaseVolume(self):
@@ -336,5 +341,6 @@ class Oscilloscope:
         x = GPIO.input(self.DIO1)
         y = GPIO.input(self.DIO2)
         return (x,y)
-        
+
+
 
