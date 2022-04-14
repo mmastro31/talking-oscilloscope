@@ -72,7 +72,8 @@ class Oscilloscope:
         self.CurrentSensor = None
         #I2S Stereo Decoder
         self.mixer = None
-        GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BCM)   
+        self.engine = pyttsx3.init()
 
 
     #------------INA260 Current Sensor----------------
@@ -116,8 +117,6 @@ class Oscilloscope:
         # default starting volume will be 20%
         self.mixer.music.set_volume(0.2)
 
-        engine = pyttsx3.init()
-
 
     # queues up and starts audio
     def playSound(self, filename):
@@ -158,6 +157,13 @@ class Oscilloscope:
     def stopSound(self):
         self.mixer.stop()
 
+    def createWav(self, text):
+
+        try:
+            self.engine.save_to_file(text , 'test.wav')
+        except:
+            print("Engine not set up")
+        self.engine.runAndWait()
 
     #------------Motors-------------------
     #Setup 4 Haptic Motors
