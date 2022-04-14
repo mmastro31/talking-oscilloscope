@@ -121,13 +121,16 @@ class Oscilloscope:
     # queues up and starts audio
     def playSound(self, filename):
 
+        sound = self.mixer.Sound(filename)
+
         try:
-            self.mixer.music.load(filename)
+            channela = sound.play()
+            time.sleep(sound.get_length())
         except pg.error:
             print("File {} not found! {}".format(filename, pg.get_error()))
             return
             
-        self.mixer.music.play(-1)
+        self.mixer.music.play(loops = 0)
 
     # pauses any playing audio
     def pauseSound(self):

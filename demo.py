@@ -101,16 +101,11 @@ def tftDisplayTest(Oscilloscope, spi):
 
 def audioTest(Oscilloscope):
     Oscilloscope.setupSound()
-    Oscilloscope.playSound()
-    print("Pausing audio")
-    Oscilloscope.pauseSound()
+
+    text = "Hello World"
+    Oscilloscope.createWav(text)
     time.sleep(5)
-    print("playing audio")
-    Oscilloscope.unpauseSound()
-    time.sleep(5)
-    Oscilloscope.increaseSound()
-    time.sleep(10)
-    Oscilloscope.stopSound()
+    Oscilloscope.playSound('test.wav')
 
 
 
