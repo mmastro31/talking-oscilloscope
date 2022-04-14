@@ -1,10 +1,9 @@
 import oscilloscope
 
 
-
-Oscilloscope = oscilloscope.Oscilloscope
-Oscilloscope.setupSound()
+scope = oscilloscope.Oscilloscope()
+scope.setupSound()
 
 text = "Hello World"
-Oscilloscope.createWav(text)
-Oscilloscope.playSound('test.wav')
+scope.createWav(text)
+scope.playSound('test.wav')
