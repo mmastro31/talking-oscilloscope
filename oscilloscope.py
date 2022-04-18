@@ -66,6 +66,13 @@ class Oscilloscope:
     DIO1 = 26
     DIO2 = 16
 
+    MCP23017_ADDR  = 0x20  # Address of peripheral on I2C bus
+    MCP23017_IODIR_A = 0x00  # IO direction configuration register address A
+    MCP23017_IODIR_B = 0x10  # IO direction configuration register address B
+    MCP23017_GPPU_A  = 0x06  # Pull-up configuration register address A
+    MCP23017_GPPU_B  = 0x16  # Pull-up configuration register address B
+    MCP23017_GPIO_A  = 0x09  # GPIO register address A
+    MCP23017_GPIO_B  = 0x19  # GPIO register address B
 
     def __init__(self):
         #Current Sensor
@@ -115,6 +122,8 @@ class Oscilloscope:
         self.mixer = pg.mixer
         self.mixer.init(freq, bitsize, channels, buffer)
         # default starting volume will be 20%
+
+        soundLevel = self.checkVolume()
         self.mixer.music.set_volume(0.2)
 
 
@@ -143,7 +152,8 @@ class Oscilloscope:
 
 
     def checkVolume(self):
-        return
+        currentVolume = None
+        return currentVolume
 
 
     # increments volume, volume is a float between 0.0 and 1.0
@@ -331,13 +341,24 @@ class Oscilloscope:
 
     #-----------------Buttons/Multiplexer---------------------
 
-    def setupButtons(self):
-        pass
+    #Set up all pins as input
+    def setupButtons(self, i2cBus):
+        i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_A, 0xFF)
+        i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_B, 0xFF)
 
-    def getButtonState(self,buttonIndex):
-        pass
+    def readButtonState(self,buttonIndex,i2cBus):
+        if buttonIndex >= 0 and buttonIndex < 8:
+            pin = buttonIndex
+            gpioReg = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_GPIO_A)
+        elif buttonIndex >= 8 and buttonIndex < 16:
+            pin = buttonIndex - 8
+            gpioReg = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_GPIO_B)
+        return (gpioReg >> pin) & 0x01
 
-
+    def readAllButtons(self,i2cBus):
+        A = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_GPIO_A)
+        B = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_GPIO_B)
+        return A,B
 
     #----------------Digital Input--------------------------
 

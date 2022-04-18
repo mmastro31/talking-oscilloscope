@@ -183,6 +183,7 @@ def mainMenu(Oscilloscope,i2c,spi):
 def main():
     Oscilloscope = oscilloscope.Oscilloscope()
     i2c = board.I2C()
+    i2cBus = smbus.SMBus(1)
     spi = board.SPI()
     print("Running demo.py...\n")
     print("Welcome!\n")
