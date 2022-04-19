@@ -24,8 +24,10 @@ def monitorSwitch(scope,i2cBus):
         l1.acquire()
         mode = scope.readButton(i2cBus, 'B', 3)
         if mode == 1 and currentMode == 0:
+            currentMode = 1
             basicMode()
         elif mode == 0 and currentMode == 1:
+            currentMode = 0
             advancedMode()
         l1.release()
         time.sleep(1)
