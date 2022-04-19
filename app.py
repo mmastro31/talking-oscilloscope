@@ -44,7 +44,6 @@ def monitorSwitch(scope,i2cBus):
 
 
 def monitorButtons(scope,i2cBus):
-    while True:
         l1.acquire()
         A,B = scope.readAllButtons(i2cBus)
         if A != 256:
