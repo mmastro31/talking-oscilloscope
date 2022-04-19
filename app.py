@@ -20,6 +20,7 @@ def advancedMode():
 
 #Monitors if Switch is moved every 1 second
 def monitorSwitch(scope,i2cBus):
+    global currentMode
     while True:
         l1.acquire()
         mode = scope.readButton(i2cBus, 'B', 3)
