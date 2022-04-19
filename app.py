@@ -8,52 +8,58 @@ import time
 
 #app = Flask(__name__)
 
+
 #Current Mode that is selected (Basic/Advanced)
 global currentMode 
 #Current measurementSetting
 global currentMeasurementMode
 currentMeasurementMode = None
 
-def basicMode():
+def basicMode(scope,i2cBus):
     global currentMeasurementMode
     if currentMeasurementMode == None:
         #First time running program
         print('Welcome to basic mode. Please select a measurement')
+        currentMeasurementMode = monitorButtons(scope, i2cBus)
     else:
         print('Basic Mode selected.')
 
 
-def advancedMode():
-    print('advanced Mode selected')
+def advancedMode(scope,i2cBus):
+    if currentMeasurementMode == None:
+        #First Time running program
+        print('Welcome to Advanced Mode. Please select a measurement')
+    else:
+        print('Advanced Mode selected')
+
 
 
 #Monitors if Switch is moved every 1 second
 def monitorSwitch(scope,i2cBus):
     global currentMode
-    while True:
-        l1.acquire()
-        mode = scope.readButton(i2cBus, 'B', 3)
-        if mode == 1 and currentMode == 0:
-            currentMode = 1
-            basicMode()
-        elif mode == 0 and currentMode == 1:
-            currentMode = 0
-            advancedMode()
-        l1.release()
-        time.sleep(1)
+    l1.acquire()
+    mode = scope.readButton(i2cBus, 'B', 3)
+    if mode == 1 and currentMode == 0:
+        currentMode = 1
+        basicMode(scope,i2cBus)
+    elif mode == 0 and currentMode == 1:
+        currentMode = 0
+        advancedMode(scope,i2cBus)
+    l1.release()
+    time.sleep(1)
 
 
 def monitorButtons(scope,i2cBus):
-        l1.acquire()
-        A,B = scope.readAllButtons(i2cBus)
-        if A != 256:
-            print('Button Pressed')
-            print(A, B)
-        elif B != 15:
-            print('Button Pressed')
-            print(A, B)
-        l1.release()
-        time.sleep(1)
+    l1.acquire()
+    A,B = scope.readAllButtons(i2cBus)
+    if A != 256:
+        print('Button Pressed')
+        print(A, B)
+    elif B != 15:
+        print('Button Pressed')
+        print(A, B)
+    l1.release()
+    time.sleep(1)
 
 
 
