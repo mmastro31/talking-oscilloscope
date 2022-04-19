@@ -1,6 +1,7 @@
 from xml.etree.ElementTree import TreeBuilder
 import oscilloscope
 import board
+import smbus
 import time
 #Not sure if these below are required bc of the way i coded everything
 import digitalio
@@ -134,7 +135,7 @@ def buttonTest(Oscilloscope,i2cBus):
         print(a,c)
         time.sleep(3)
 
-def mainMenu(Oscilloscope,i2c,spi):
+def mainMenu(Oscilloscope,i2c,spi,i2cBus):
     print("The following options are available:\n")
     print("   0 - Current Sensor\n")
     print("   1 - TFT Display\n")
@@ -172,7 +173,7 @@ def mainMenu(Oscilloscope,i2c,spi):
             print("---ERROR: No Digital Inputs Detected---\n")
     elif (option == "5"):  # Buttons / Physical UI
         try:
-            buttonTest(Oscilloscope)
+            buttonTest(Oscilloscope,i2cBus)
         except:
             print("---ERROR: No Buttons detected---\n")
     else:
@@ -185,7 +186,7 @@ def mainMenu(Oscilloscope,i2c,spi):
     stayORleave.strip()
     stayORleave.lower()
     if (stayORleave == "n"):
-        mainMenu(Oscilloscope,i2c,spi)
+        mainMenu(Oscilloscope,i2c,spi,i2cBus)
     else:
         return
 
@@ -196,7 +197,7 @@ def main():
     spi = board.SPI()
     print("Running demo.py...\n")
     print("Welcome!\n")
-    mainMenu(Oscilloscope,i2c,spi)
+    mainMenu(Oscilloscope,i2c,spi,i2cBus)
 
 
 
