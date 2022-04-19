@@ -392,10 +392,12 @@ class Oscilloscope:
 
     def setupButtons(self, i2cBus):
 
-        temp = i2cBus.read_byte_data(self.MCP23017_ADDR, 0x0A)
-        print(temp)
-        t = i2cBus.read_byte_data(self.MCP23017_ADDR, 0x05)
-        print(t)
+        IOCON = i2cBus.read_byte_data(self.MCP23017_ADDR, 0x0A)
+
+        if IOCON == 0:
+            IOCON = IOCON | (1<<7)
+            i2cBus.write_byte_data(self.MCP23017_ADDR, 0x0A, IOCON)     
+
         #Set up all pins as input
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_A, 0xFF)
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_B, 0xFF)
