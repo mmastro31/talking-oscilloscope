@@ -5,8 +5,8 @@ scope = oscilloscope.Oscilloscope()
 scope.setupSound()
 lines = [
     'Welcome to the Talking Oscilloscope. You are in Basic mode. Click the Play button to continue or switch to Advanced mode.',  #1
-    'You are in advanced mode.',  #3
-    'Welcome to the Talking Oscilloscope. You are in Advanced mode. Click your desired measurement or switch to Basic mode.',    #2
+    'You are in advanced mode.',  #2
+    'Welcome to the Talking Oscilloscope. You are in Advanced mode. Click your desired measurement or switch to Basic mode.',    #3
     'This is the measurement menu. Click next until you reach the desired measurement function. When you select the correct measurement, press play.',
     'Please connect the positive probe to the terminal that is buzzing.',
     'PLease connect the negative probe to the terminal that is buzzing.',

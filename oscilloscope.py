@@ -179,6 +179,7 @@ class Oscilloscope:
         except:
             print("Engine not set up")
         self.engine.runAndWait()
+        return 
 
     #------------Motors-------------------
     #Setup 4 Haptic Motors
