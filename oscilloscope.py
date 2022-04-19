@@ -396,8 +396,9 @@ class Oscilloscope:
         #Set up all pins as input
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_A, 0xFF)
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_B, 0xFF)
-        print('IODIR A' + i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_A))
-        print('IODIR B' + i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_B))       
+        temp1 = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_A)
+        temp2 = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_B) 
+        print(temp1,temp2)  
 
         self.setPinDir(i2cBus,'A', 0, 1, pullup=True)
         self.setPinDir(i2cBus,'A', 1, 1, pullup=True)
