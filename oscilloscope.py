@@ -378,6 +378,7 @@ class Oscilloscope:
             directionReg = directionReg & ~(1<<pin)
 
         i2cBus.write_byte_data(self.MCP23017_ADDR, IODIR, directionReg)
+        print(directionReg)
 
         if isInput:
             puReg = i2cBus.read_byte_data(self.MCP23017_ADDR, GPPU)
@@ -386,11 +387,13 @@ class Oscilloscope:
             else:
                 puReg = puReg & ~(1<<pin)
             i2cBus.write_byte_data(self.MCP23017_ADDR, GPPU, puReg)
+            print(puReg)
 
 
-    #Set up all pins as input
     def setupButtons(self, i2cBus):
 
+
+        #Set up all pins as input
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_A, 0xFF)
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_B, 0xFF)
 

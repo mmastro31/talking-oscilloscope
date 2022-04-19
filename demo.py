@@ -126,6 +126,7 @@ def digitalInputTest(Oscilloscope):
 def buttonTest(Oscilloscope,i2cBus):
     Oscilloscope.setupButtons(i2cBus)
     print('Buttons Set Up')
+    time.sleep(5)
     d = Oscilloscope.readButton(i2cBus, 'A', 0)
     print(d)
     b = Oscilloscope.readButton(i2cBus, 'A', 1)
