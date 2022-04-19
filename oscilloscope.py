@@ -170,10 +170,12 @@ class Oscilloscope:
     def stopSound(self):
         self.mixer.stop()
 
-    def createWav(self, text):
+    def createWav(self, text, name):
+
+        file = name + '.wav'
 
         try:
-            self.engine.save_to_file(text , 'test.wav')
+            self.engine.save_to_file(text , file)
         except:
             print("Engine not set up")
         self.engine.runAndWait()
@@ -409,7 +411,7 @@ class Oscilloscope:
         self.setPinDir(i2cBus,'B', 0, 1, pullup=True)
         self.setPinDir(i2cBus,'B', 1, 1, pullup=True)
         self.setPinDir(i2cBus,'B', 2, 1, pullup=True)
-
+        self.setPinDir(i2cBus,'B', 3, 1, pullup=True)
 
     def readButton(self,i2cBus, AorB, pin):
 

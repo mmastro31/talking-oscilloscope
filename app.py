@@ -1,8 +1,10 @@
 import oscilloscope
 from flask import Flask
+import board
+import smbus
 
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
 
 
@@ -15,6 +17,16 @@ def onStart(scope,i2c,spi,i2cBus):
     scope.setupButtons(i2cBus)
 
 
+def menu(scope,i2c,spi,i2cBus):
+    mode = scope.readButton(i2cBus,'B',3)
+    if mode == 1:
+        #Basic Mode
+        scope.playSound('1.wav')
+    elif mode == 0:
+        #Advanced Mode
+        scope.playSound('2.wav')
+
+
 
 
 if __name__ == "__main__":
@@ -24,4 +36,8 @@ if __name__ == "__main__":
     scope = oscilloscope.Oscilloscope()
     onStart(scope,i2c,spi,i2cBus)
 
-    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+    menu(scope,i2c,spi,i2cBus)
+
+
+
+    #app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
