@@ -20,7 +20,6 @@ def basicMode(scope,i2cBus):
     if currentMeasurementMode == None:
         #First time running program
         print('Welcome to basic mode. Please select a measurement')
-        currentMeasurementMode = monitorButtons(scope, i2cBus)
     else:
         print('Basic Mode selected.')
 
@@ -84,9 +83,9 @@ if __name__ == "__main__":
     #Determine if Oscilloscope is in Basic or Advanced Mode based on switch placement
     currentMode = scope.readButton(i2cBus, 'B', 3)
     if currentMode:
-        basicMode()  #Enter Basic Mode
+        basicMode(scope,i2cBus)  #Enter Basic Mode
     else:
-        advancedMode() #Enter Advanced Mode
+        advancedMode(scope,i2cBus) #Enter Advanced Mode
 
     #Starting Threads
     l1 = Lock()  #lock to control i2c bus
