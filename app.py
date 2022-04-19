@@ -8,11 +8,20 @@ import time
 
 #app = Flask(__name__)
 
-global currentMode
-
+#Current Mode that is selected (Basic/Advanced)
+global currentMode 
+#Current measurementSetting
+global currentMeasurementMode
+currentMeasurementMode = None
 
 def basicMode():
-    print('basic Mode selected')
+    global currentMeasurementMode
+    if currentMeasurementMode == None:
+        #First time running program
+        print('Welcome to basic mode. Please select a measurement')
+    else:
+        print('Basic Mode selected.')
+
 
 def advancedMode():
     print('advanced Mode selected')
@@ -30,6 +39,20 @@ def monitorSwitch(scope,i2cBus):
         elif mode == 0 and currentMode == 1:
             currentMode = 0
             advancedMode()
+        l1.release()
+        time.sleep(1)
+
+
+def monitorButtons(scope,i2cBus):
+    while True:
+        l1.acquire()
+        A,B = scope.readAllButtons(i2cBus)
+        if A != 256:
+            print('Button Pressed')
+            print(A, B)
+        elif B != 15:
+            print('Button Pressed')
+            print(A, B)
         l1.release()
         time.sleep(1)
 
@@ -65,7 +88,12 @@ if __name__ == "__main__":
     t1 = Thread(target = monitorSwitch(scope,i2cBus))
     t1.daemon = True
     t1.start()
+    t2 = Thread(target = monitorButtons(scope,i2cBus))
+    t2.daemon = True
+    t2.start()
     t1.join()
+    t2.join()
+
 
 
     #app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
