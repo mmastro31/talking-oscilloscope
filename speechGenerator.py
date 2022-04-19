@@ -1,4 +1,5 @@
 import oscilloscope
+import time
 
 scope = oscilloscope.Oscilloscope()
 scope.setupSound()
@@ -20,4 +21,4 @@ lines = [
 
 for i in range(len(lines)):
     scope.createWav(lines[i], str(i+1))
-    
+    time.sleep(5)
