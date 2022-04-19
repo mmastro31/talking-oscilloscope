@@ -122,8 +122,17 @@ def motorTest(Oscilloscope):
 def digitalInputTest(Oscilloscope):
     pass
 
-def buttonTest(Oscilloscope):
-    pass
+def buttonTest(Oscilloscope,i2cBus):
+    Oscilloscope.setupButtons(i2cBus)
+    print('Buttons Set Up')
+    d = Oscilloscope.readButton(i2cBus, 'A', 0)
+    print(d)
+    b = Oscilloscope.readButton(i2cBus, 'A', 1)
+    print(b)
+    while True:
+        a,c = Oscilloscope.readAllButtons(i2cBus)
+        print(a,c)
+        time.sleep(3)
 
 def mainMenu(Oscilloscope,i2c,spi):
     print("The following options are available:\n")
