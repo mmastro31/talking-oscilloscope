@@ -338,21 +338,84 @@ class Oscilloscope:
         # Display image.
         disp.image(image)
 
+    '''
+    -----------------Buttons/Multiplexer---------------------
 
-    #-----------------Buttons/Multiplexer---------------------
+    GPIOA0-5 = Advanced Buttons 
+    GPIOA0 = Single Shot Voltage 
+    GPIOA1 = Single Shot Current 
+    GPIOA2 = Continuous Voltage 
+    GPIOA3 = Continuous Current 
+    GPIOA4 = DIO1 
+    GPIOA5 = DIO2 
+
+    GPIOB0-4 = Switch and Basic Buttons
+    GPIOB0 = Home 
+    GPIOB1 = Play 
+    GPIOB2 = Next 
+    GPIOB3 = Switch Basic Side 
+    GPIOB4 = Switch Advanced Side 
+
+
+    '''
+
+    def setPinDir(self,i2cBus, AorB, pin, isInput, pullup = False):
+
+        if AorB == 'A':
+            IODIR = self.MCP23017_IODIR_A
+            GPPU = self.MCP23017_GPPU_A
+        elif AorB == 'B':
+            IODIR = self.MCP23017_IODIR_B
+            GPPU = self.MCP23017_GPPU_B
+        else:
+            print('neither A or B given')
+
+        directionReg = i2cBus.read_byte_data(self.MCP23017_ADDR, IODIR)
+
+        if isInput:
+            directionReg |= (1 << pin)
+        else:
+            directionReg = directionReg & ~(1<<pin)
+
+        i2cBus.write_byte_data(self.MCP23017_ADDR, IODIR, directionReg)
+
+        if isInput:
+            puReg = i2cBus.read_byte_data(self.MCP23017_ADDR, GPPU)
+            if pullup:
+                puReg = puReg | (1<<pin)
+            else:
+                puReg = puReg & ~(1<<pin)
+            i2cBus.write_byte_data(self.MCP23017_ADDR, GPPU, puReg)
+
 
     #Set up all pins as input
     def setupButtons(self, i2cBus):
+
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_A, 0xFF)
         i2cBus.write_byte_data(self.MCP23017_ADDR, self.MCP23017_IODIR_B, 0xFF)
 
-    def readButtonState(self,buttonIndex,i2cBus):
-        if buttonIndex >= 0 and buttonIndex < 8:
-            pin = buttonIndex
-            gpioReg = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_GPIO_A)
-        elif buttonIndex >= 8 and buttonIndex < 16:
-            pin = buttonIndex - 8
-            gpioReg = i2cBus.read_byte_data(self.MCP23017_ADDR, self.MCP23017_GPIO_B)
+        self.setPinDir(i2cBus,'A', 0, 1, pullup=True)
+        self.setPinDir(i2cBus,'A', 1, 1, pullup=True)
+        self.setPinDir(i2cBus,'A', 2, 1, pullup=True)
+        self.setPinDir(i2cBus,'A', 3, 1, pullup=True)
+        self.setPinDir(i2cBus,'A', 4, 1, pullup=True)
+        self.setPinDir(i2cBus,'A', 5, 1, pullup=True)
+        self.setPinDir(i2cBus,'B', 0, 1, pullup=True)
+        self.setPinDir(i2cBus,'B', 1, 1, pullup=True)
+        self.setPinDir(i2cBus,'B', 2, 1, pullup=True)
+
+
+    def readButton(self,i2cBus, AorB, pin):
+
+        if AorB == 'A':
+            GPIO = self.MCP23017_GPIO_A
+        elif AorB == 'B':
+            GPIO = self.MCP23017_GPIO_B
+        else:
+            print('neither A or B given')
+
+        gpioReg = i2cBus.read_byte_data(self.MCP23017_ADDR, GPIO)
+
         return (gpioReg >> pin) & 0x01
 
     def readAllButtons(self,i2cBus):
