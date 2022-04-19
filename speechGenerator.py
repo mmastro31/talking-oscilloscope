@@ -1,6 +1,7 @@
 import oscilloscope
 
 scope = oscilloscope.Oscilloscope()
+scope.setupSound()
 lines = [
     'Welcome to the Talking Oscilloscope. You are in Basic mode. Click the Play button to continue or switch to Advanced mode.',  #1
     'You are in advanced mode.',  #3
