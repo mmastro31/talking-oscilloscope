@@ -34,10 +34,10 @@ def monitorSwitch(scope,i2cBus):
 
 def onStart(scope,i2c,spi,i2cBus):
     scope.setupSound()
-    scope.setupCurrentSensor(i2c)
-    scope.setupMotors()
-    scope.setupDisplay(spi)
-    scope.setupDigitalPins()
+    #scope.setupCurrentSensor(i2c)
+    #scope.setupMotors()
+    #scope.setupDisplay(spi)
+    #scope.setupDigitalPins()
     scope.setupButtons(i2cBus)
 
 
