@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     #Starting Threads
     l1 = Lock()  #lock to control i2c bus
-    t1 = Thread(target = monitorSwitch)
+    t1 = Thread(target = monitorSwitch(scope,i2cBus))
     t1.daemon = True
     t1.start()
     t1.join()
