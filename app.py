@@ -94,7 +94,7 @@ def basicMode(scope,i2cBus):
         playPressed = scope.readButton(i2cBus, 'B', 1)
     
     print('The negative port is now buzzing. Please connect your probe to the port.')
-    scope.buzzMotor(measurementMode.MODE)
+    scope.buzzMotor(measurementMode.MOTOR)
     print('Press play when you are done')
     playPressed = 1
     while playPressed != 0:
@@ -143,7 +143,6 @@ def measuring(scope, measurementMode):
 def monitorSwitch(scope,i2cBus):
     global currentMode
     while True:
-        l1.acquire()
         mode = scope.readButton(i2cBus, 'B', 3)
         if mode == 1 and currentMode == 0:
             currentMode = 1
@@ -151,14 +150,12 @@ def monitorSwitch(scope,i2cBus):
         elif mode == 0 and currentMode == 1:
             currentMode = 0
             advancedMode(scope,i2cBus)
-        l1.release()
         time.sleep(1)
 
 
 def monitorHome(scope,i2cBus):
     global currentMode
     while True:
-        l1.acquire()
         home = scope.readButton(i2cBus, 'B', 0)
         if home == 0:
             print('Going Home')
@@ -167,7 +164,6 @@ def monitorHome(scope,i2cBus):
             elif currentMode == 0:
                 advancedMode(scope,i2cBus)
             home = 1
-        l1.release()
         time.sleep(1)
 
 
