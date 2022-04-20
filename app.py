@@ -74,17 +74,22 @@ def monitorButtons(scope,i2cBus):
     while e1.isSet():
         l1.acquire()
         A,B = scope.readAllButtons(i2cBus)
-        if A != 255:
+        if A != 63:
             print(A)
-            #currentMeasurementMode = buttonDict[A]
+            try:
+                currentMeasurementMode = buttonDict[A]
+            except:
+                pass
             print(currentMeasurementMode)
 
-        '''
         elif B != 15:
             print(B)
-            #currentMeasurementMode = buttonDict[B]
+            try:
+                currentMeasurementMode = buttonDict[B]
+            except:
+                pass
             print(currentMeasurementMode)
-        '''
+
         l1.release()
         time.sleep(1)
 
