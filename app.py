@@ -81,13 +81,13 @@ def monitorButtons(scope,i2cBus):
         try:
             buttonPressed = buttonDict[A]
             e1.clear()
-            e2.set()
         except:
             pass
 
         try:
             buttonPressed = buttonDict[B]
             e1.clear()
+            e2.set()
         except:
             pass
         l1.release()
