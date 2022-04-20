@@ -35,27 +35,27 @@ buttonDict = {
 
 class SSV:
     NAME = 'Single Shot Voltage'
-    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+    MOTOR = 1
 
 class SSC:
     NAME = 'Single Shot Current'
-    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+    MOTOR = 1
 
 class CV:
     NAME = 'Continuous Voltage'
-    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+    MOTOR = 1
 
 class CC:
     NAME = 'Continuous Current'
-    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+    MOTOR = 1
 
 class DIO1:
     NAME = 'Digital IO 1'
-    MOTOR = oscilloscope.Oscilloscope.motorList[3]
+    MOTOR = 3
 
 class DIO2:
     NAME = 'Digital IO 2'
-    MOTOR = oscilloscope.Oscilloscope.motorList[4]
+    MOTOR = 4
 
 
 measurementModes = [SSV, SSC, CV, CC, DIO1, DIO2]
@@ -106,6 +106,8 @@ def basicMode(scope,i2cBus):
         playPressed = scope.readButton(i2cBus, 'B', 1)
 
     value = measuring(scope,measurementMode)
+
+    print(value)
 
 
 
