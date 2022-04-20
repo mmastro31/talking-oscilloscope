@@ -101,6 +101,7 @@ def basicMode(scope,i2cBus):
         playPressed = scope.readButton(i2cBus, 'B', 1)
 
     print('You are now ready to begin measuring. Press play when you are ready.')
+    time.sleep(1)
     playPressed = 1
     while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
@@ -123,17 +124,30 @@ def advancedMode(scope,i2cBus):
         e1.set()
 
 
-def measuring(scope, measurementMode):
+def measuring(scope, measurementMode, i2cBus):
     value = 0
     if measurementMode is SSV or measurementMode is SSC:
         if measurementMode is SSV:
             value = scope.measureVoltage()
+            print('measuring SSV')
         elif measurementMode is SSC:
             value = scope.measureCurrent()
+            print('measuring SSC')
     elif measurementMode is CV or measurementMode is CC:
-        pass
+        playPressed = 1
+        value = []
+        while playPressed != 0:
+            playPressed = scope.readButton(i2cBus, 'B', 1)
+            if measurementMode is CV:
+                temp = scope.measureVoltage()
+            elif measurementMode is CC:
+                temp = scope.measureCurrent()
+            value.append(temp)    
+        print('Continuous Measurement Taken')
+        print(value)
     elif measurementMode is DIO1 or measurementMode is DIO2:
-        pass 
+        value = scope.readDigitalPin()
+        print('measuring DIO')
 
     return value
 
