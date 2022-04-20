@@ -21,17 +21,6 @@ e1 = Event()
 e2 = Event()
 l1 = Lock()  #lock to control i2c bus
 
-buttonDict = {
-    62: 'Single Shot Voltage',
-    61: 'Single Shot Current',
-    59: 'Continuous Voltage',
-    55: 'Continuous Current',
-    47: 'Digital IO 1',
-    31: 'Digital IO 2',
-    3: 'Home',
-    5: 'Play',
-    6: 'Next'
-}
 
 class SSV:
     NAME = 'Single Shot Voltage'
@@ -126,6 +115,7 @@ def advancedMode(scope,i2cBus):
 
 def measuring(scope, measurementMode, i2cBus):
     value = 0
+    time.sleep(1)
     if measurementMode is SSV or measurementMode is SSC:
         if measurementMode is SSV:
             value = scope.measureVoltage()
