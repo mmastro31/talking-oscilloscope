@@ -345,17 +345,17 @@ class Oscilloscope:
     -----------------Buttons/Multiplexer---------------------
 
     GPIOA0-5 = Advanced Buttons 
-    GPIOA0 = Single Shot Voltage 
-    GPIOA1 = Single Shot Current 
-    GPIOA2 = Continuous Voltage 
-    GPIOA3 = Continuous Current 
-    GPIOA4 = DIO1 
-    GPIOA5 = DIO2 
+    GPIOA0 = Single Shot Voltage = 62
+    GPIOA1 = Single Shot Current = 61
+    GPIOA2 = Continuous Voltage = 59
+    GPIOA3 = Continuous Current = 55
+    GPIOA4 = DIO1 = 47
+    GPIOA5 = DIO2 = 31
 
     GPIOB0-4 = Switch and Basic Buttons
-    GPIOB0 = Home 
-    GPIOB1 = Play 
-    GPIOB2 = Next 
+    GPIOB0 = Home = 14
+    GPIOB1 = Play = 13
+    GPIOB2 = Next = 11
     GPIOB3 = Switch Basic Side 
     GPIOB4 = Switch Advanced Side 
 
