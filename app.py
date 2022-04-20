@@ -56,6 +56,8 @@ def basicMode(scope,i2cBus):
             time.sleep(2)
             i += 1
             nextPressed = 1
+            if i == 6:
+                i = 0
     
     print('Welcome to ' + measurementMode)
 
