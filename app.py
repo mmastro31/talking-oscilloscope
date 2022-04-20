@@ -76,11 +76,11 @@ def monitorButtons(scope,i2cBus):
         A,B = scope.readAllButtons(i2cBus)
         if A != 63:
             print(A)
-            currentMeasurementMode = buttonDict[A]
+            #currentMeasurementMode = buttonDict[A]
             print(currentMeasurementMode)
         elif B != 15:
             print(B)
-            currentMeasurementMode = buttonDict[B]
+            #currentMeasurementMode = buttonDict[B]
             print(currentMeasurementMode)
         l1.release()
         time.sleep(1)
