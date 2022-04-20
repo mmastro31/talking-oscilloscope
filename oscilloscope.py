@@ -1,3 +1,4 @@
+from tkinter import NONE
 import adafruit_ina260
 import board
 import busio
@@ -81,6 +82,15 @@ class Oscilloscope:
         self.mixer = None
         GPIO.setmode(GPIO.BCM)   
         self.engine = pyttsx3.init()
+        #TFT Display Global Variables
+        #image,draw,disp,backlight,width,height
+        image = None 
+        draw = None
+        disp = None
+        backlight = None
+        width = None
+        height = None
+
 
 
     #------------INA260 Current Sensor----------------
@@ -245,9 +255,9 @@ class Oscilloscope:
 
     def setupDisplay(self,spi):
         # Turn on the Backlight
-        backlight = digitalio.DigitalInOut(board.D25)
-        backlight.switch_to_output()
-        backlight.value = True
+        self.backlight = digitalio.DigitalInOut(board.D25)
+        self.backlight.switch_to_output()
+        self.backlight.value = True
 
         # Configuration for CS and DC pins (these are PiTFT defaults):
         cs_pin = digitalio.DigitalInOut(board.CE0)
@@ -258,69 +268,66 @@ class Oscilloscope:
         BAUDRATE = 24000000
 
         # Create the display:
-        disp = st7735.ST7735R(spi, rotation=270, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE, )
+        self.disp = st7735.ST7735R(spi, rotation=270, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE, )
 
 
         # Create blank image for drawing.
         # Make sure to create image with mode 'RGB' for full color.
-        if disp.rotation % 180 == 90:
-            height = disp.width  # we swap height/width to rotate it to landscape!
-            width = disp.height
+        if self.disp.rotation % 180 == 90:
+            self.height = self.disp.width  # we swap height/width to rotate it to landscape!
+            self.width = self.disp.height
         else:
-            width = disp.width  # we swap height/width to rotate it to landscape!
-            height = disp.height
+            self.width = self.disp.width  # we swap height/width to rotate it to landscape!
+            self.height = self.disp.height
 
-        image = Image.new("RGB", (width, height))
+        self.image = Image.new("RGB", (self.width, self.height))
 
         # Get drawing object to draw on image.
-        draw = ImageDraw.Draw(image)
+        self.draw = ImageDraw.Draw(self.image)
 
-        return image,draw,disp,backlight,width,height
+    def clearDisplay(self):
+        self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=(0, 0, 0))
+        self.disp.image(self.image)
 
-    def clearDisplay(self,image,draw,disp,width,height):
-        draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
-        disp.image(image)
-
-    def displayOff(self,backlight):
+    def displayOff(self):
         # Turn off Backlight
-        backlight.value = False
+        self.backlight.value = False #NEEDS FIXING <================================================================================
 
-    def displayOn(self,backlight):
+    def displayOn(self):
         # Turn on Backlight
-        backlight.value = True
+        self.backlight.value = True
 
-    def displayImage(self,imageFile,image,draw,disp,width,height):
-        self.clearDisplay(image,draw,disp,width,height)
+    def displayImage(self,imageFile):
+        self.clearDisplay()
 
         #Try to load in image but if filename doesnt exist, return
         try:
-            image = Image.open(imageFile)
+            self.image = Image.open(imageFile)
         except:
             print("---ERROR: ",imageFile," does not exist---")
             return 1
 
         # Scale the image to the smaller screen dimension
-        image_ratio = image.width / image.height
-        screen_ratio = width / height
+        image_ratio = self.image.width / self.image.height
+        screen_ratio = self.width / self.height
         if screen_ratio < image_ratio:
-            scaled_width = image.width * height // image.height
-            scaled_height = height
+            scaled_width = self.image.width * self.height // self.image.height
+            scaled_height = self.height
         else:
-            scaled_width = width
-            scaled_height = image.height * width // image.width
-        image = image.resize((scaled_width, scaled_height), Image.BICUBIC)
+            scaled_width = self.width
+            scaled_height = self.image.height * self.width // self.image.width
+        self.image = self.image.resize((scaled_width, scaled_height), Image.BICUBIC)
 
         # Crop and center the image
-        x = scaled_width // 2 - width // 2
-        y = scaled_height // 2 - height // 2
-        image = image.crop((x, y, x + width, y + height))
+        x = scaled_width // 2 - self.width // 2
+        y = scaled_height // 2 - self.height // 2
+        self.image = self.image.crop((x, y, x + self.width, y + self.height))
 
         # Display image.
-        disp.image(image)
-        return 0
+        self.disp.image(self.image)
 
-    def displayText(self,text,image,draw,disp,width,height):
-        self.clearDisplay(image, draw, disp, width, height)
+    def displayText(self,text):
+        self.clearDisplay()
 
         # First define some constants to allow easy resizing of shapes.
         BORDER = 32
@@ -328,18 +335,18 @@ class Oscilloscope:
 
         # Draw a black filled box as the background
         # technically redundant as clearDisplay does the same thing
-        draw.rectangle((0, 0, width, height), fill=(0, 0, 0))
-        disp.image(image)
+        self.draw.rectangle((0, 0, self.width, self.height), fill=(0, 0, 0))
+        self.disp.image(self.image)
 
         # Load a TTF Font
         font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
 
         # Draw Some Text
         (font_width, font_height) = font.getsize(text)
-        draw.text((width // 2 - font_width // 2, height // 2 - font_height // 2),text,font=font,fill=(255, 255, 0),)
+        self.draw.text((self.width // 2 - font_width // 2, self.height // 2 - font_height // 2),text,font=font,fill=(255, 255, 0),)
 
         # Display image.
-        disp.image(image)
+        self.disp.image(self.image)
 
     '''
     -----------------Buttons/Multiplexer---------------------
