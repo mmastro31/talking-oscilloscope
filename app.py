@@ -172,7 +172,7 @@ def monitorHome(scope,i2cBus):
 
 def onStart(scope,i2c,spi,i2cBus):
     scope.setupSound()
-    #scope.setupCurrentSensor(i2c)
+    scope.setupCurrentSensor(i2c)
     scope.setupMotors()
     #scope.setupDisplay(spi)
     scope.setupDigitalPins()
