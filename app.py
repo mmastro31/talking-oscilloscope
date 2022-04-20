@@ -33,14 +33,33 @@ buttonDict = {
     6: 'Next'
 }
 
+measurementModes = ['Single Shot Voltage', 'Single Shot Current', 'Continuous Voltage', 'Continuous Current', 'Digital IO 1', 'Digital IO 2']
+
 def basicMode(scope,i2cBus):
     global buttonPressed
     print('Basic Mode selected. Press play when ready.')
     playPressed = scope.readButton(i2cBus, 'B', 1)
-    while playPressed != 1:
+    while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
     print('Play button pressed')
+    playPressed = 1
+    print('Single Shot Voltage. Press next to select next measurement mode or press play')
+    measurementMode = measurementModes[0]
+    while playPressed != 0:
+        playPressed = scope.readButton(i2cBus, 'B', 1)
+        nextPressed = scope.readButton(i2cBus, 'B', 2)
+        i = 1
+        if nextPressed == 0:
+            measurementMode = measurementModes[i]
+            print(measurementMode + '. Press next to select next measurement mode or press play')
+            i += 1
+            nextPressed = 1
     
+    print('Welcome to ' + measurementMode)
+    
+
+
+
     
 
 
