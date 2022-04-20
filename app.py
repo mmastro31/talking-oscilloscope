@@ -15,6 +15,8 @@ global currentMode
 global currentMeasurementMode
 currentMeasurementMode = None
 
+e1 = Event()
+l1 = Lock()  #lock to control i2c bus
 
 buttonDict = {
     62: 'Single Shot Voltage',
@@ -110,8 +112,7 @@ if __name__ == "__main__":
         advancedMode(scope,i2cBus) #Enter Advanced Mode
 
     #Starting Threads
-    e1 = Event()
-    l1 = Lock()  #lock to control i2c bus
+
     t1 = Thread(target = monitorSwitch, args=(scope,i2cBus))
     t1.daemon = True
     t1.start()
