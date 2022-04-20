@@ -27,7 +27,34 @@ def currentSensorTest(Oscilloscope,i2c):
     Oscilloscope.CurrentSensor.mode = oscilloscope.CurrentSensorMode.SHUTDOWN
     print('Oscilloscope shutdown.')
 
-def tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,height):
+def ToBePastedintoApp(Oscilloscope):
+    scope = Oscilloscope
+    welcome = "Welcome to the Talking-Assisted Oscilloscope."
+    Basic_mode = "You are currently in Basic Mode."
+    Advanced_mode = "You are currently in Advanced Mode."
+    press_play = "Press Play to continue."
+    mode_cycle = "___________"      #useless, will just be the mode depending on the button
+    mode_selected = "_______ has been selected."
+    mode_selection = "Press Play to select the mode or Next to cycle through the modes."
+    prob = "The ____ port is now buzzing, please connect your prob to the port."
+    measurement = "_______ Amps/Volts"  #depends on the measurement, this is kinda useless
+    after_m = "Press Play to repeat the value, Next to read a new value, or Home to go back to the main menu."
+
+    scope.displayText(welcome)
+    scope.displayText(Basic_mode)
+    scope.displayText(Advanced_mode)
+    scope.displayText(Basic_mode)
+    scope.displayText(press_play)
+    scope.displayText(mode_cycle)
+    scope.displayText(mode_selected)
+    scope.displayText(mode_selection)
+    scope.displayText(prob)
+    scope.displayText(measurement)
+    scope.displayText(after_m)
+
+    return
+
+def tftDisplayMenuSelection(Oscilloscope):
     print("The following display options are available:\n")
     print("   0 - CLEAR\n")
     print("   1 - IMAGE\n")
@@ -43,16 +70,16 @@ def tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,hei
         print("================================\n")
         print("        CLEARING DISPLAY\n")
         print("================================\n")
-        Oscilloscope.clearDisplay(image,draw,disp,width,height)
+        Oscilloscope.clearDisplay()
     elif (option == "1"):
         print("================================\n")
         print("        DISPLAYING IMAGE\n")
         print("================================\n")
         imageFile = input("Please type out the name of the image file:")
-        value = Oscilloscope.displayImage(imageFile,image,draw,disp,width,height)
+        value = Oscilloscope.displayImage(imageFile)
         if(value == 1):
             print("Please ensure the file name is valid.\n")
-            tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,height)
+            tftDisplayMenuSelection(Oscilloscope)
         else:
             pass
     elif (option == "2"):
@@ -60,7 +87,7 @@ def tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,hei
         print("        DISPLAYING TEXT\n")
         print("================================\n")
         text = input("Please type out your text: ")
-        Oscilloscope.displayText(text,image,draw,disp,width,height)
+        Oscilloscope.displayText(text)
     elif (option == "3"):
         print("================================\n")
         print("        DISPLAYING GRAPH\n")
@@ -71,12 +98,12 @@ def tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,hei
         print("================================\n")
         print("       TURING DISPLAY OFF\n")
         print("================================\n")
-        Oscilloscope.displayOff(backlight)
+        Oscilloscope.displayOff()
     elif (option == "5"):
         print("================================\n")
         print("        TURING DISPLAY ON\n")
         print("================================\n")
-        Oscilloscope.displayOn(backlight)
+        Oscilloscope.displayOn()
     elif (option == "6"):
         print("================================\n")
         print("            EXITING\n")
@@ -84,14 +111,14 @@ def tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,hei
         return
     else:
         print("---ERROR: Not a valid option. Please select a number from the list---\n")
-        tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,height)
+        tftDisplayMenuSelection(Oscilloscope)
 
-def tftDisplayTest(Oscilloscope, spi):
-    image, draw, disp, backlight, width, height = Oscilloscope.setupDisplay(spi)
+def tftDisplayTest(Oscilloscope,spi):
+    Oscilloscope.setupDisplay(spi)
     print("Setup Complete.\n")
     value = True
     while (value == True):
-        tftDisplayMenuSelection(Oscilloscope,spi,image,draw,disp,backlight,width,height)
+        tftDisplayMenuSelection(Oscilloscope)
         repeat = input("Would you like quit TFT Display(y/n)?")
         repeat.strip()
         repeat.lower()
