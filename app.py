@@ -14,8 +14,11 @@ global currentMode
 #Current measurementSetting
 global currentMeasurementMode
 currentMeasurementMode = None
+global buttonPressed
+buttonPressed = None
 
 e1 = Event()
+e2 = Event()
 l1 = Lock()  #lock to control i2c bus
 
 buttonDict = {
@@ -25,20 +28,21 @@ buttonDict = {
     55: 'Continuous Current',
     47: 'Digital IO 1',
     31: 'Digital IO 2',
-    14: 'Home',
-    13: 'Play',
-    11: 'Next'
+    3: 'Home',
+    5: 'Play',
+    6: 'Next'
 }
 
 def basicMode(scope,i2cBus):
     global currentMeasurementMode
-    if currentMeasurementMode == None:
-        #First time running program
-        print('Welcome to basic mode. Please select a measurement')
+    print('Basic Mode selected. Press play when ready.')
+    e1.set()
+    while buttonPressed is not None and buttonPressed != 'Play':
         e1.set()
-    else:
-        print('Basic Mode selected.')
-        e1.set()
+    print('Play button pressed')
+    
+
+
 
 
 def advancedMode(scope,i2cBus):
@@ -70,26 +74,23 @@ def monitorSwitch(scope,i2cBus):
 
 
 def monitorButtons(scope,i2cBus):
-    global currentMeasurementMode
+    global buttonPressed
     while e1.isSet():
         l1.acquire()
         A,B = scope.readAllButtons(i2cBus)
-        if A != 63:
-            print(A)
-            try:
-                currentMeasurementMode = buttonDict[A]
-            except:
-                pass
-            print(currentMeasurementMode)
+        print(A, B)
+        try:
+            buttonPressed = buttonDict[A]
+            e1.clear()
+            e2.set()
+        except:
+            pass
 
-        elif B != 15:
-            print(B)
-            try:
-                currentMeasurementMode = buttonDict[B]
-            except:
-                pass
-            print(currentMeasurementMode)
-
+        try:
+            buttonPressed = buttonDict[B]
+            e1.clear()
+        except:
+            pass
         l1.release()
         time.sleep(1)
 
@@ -120,7 +121,6 @@ if __name__ == "__main__":
         advancedMode(scope,i2cBus) #Enter Advanced Mode
 
     #Starting Threads
-
     t1 = Thread(target = monitorSwitch, args=(scope,i2cBus))
     t1.daemon = True
     t1.start()
