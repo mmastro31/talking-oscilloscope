@@ -36,11 +36,11 @@ buttonDict = {
 def basicMode(scope,i2cBus):
     global buttonPressed
     print('Basic Mode selected. Press play when ready.')
-    e1.set()
-    while buttonPressed is not None and buttonPressed != 'Play':
-        e1.set()
-    e2.wait()
+    playPressed = scope.readButton(i2cBus, 'B', 1)
+    while playPressed != 1:
+        playPressed = scope.readButton(i2cBus, 'B', 1)
     print('Play button pressed')
+    
     
 
 
@@ -87,7 +87,6 @@ def monitorButtons(scope,i2cBus):
         try:
             buttonPressed = buttonDict[B]
             e1.clear()
-            e2.set()
         except:
             pass
         l1.release()
