@@ -34,15 +34,14 @@ buttonDict = {
 }
 
 def basicMode(scope,i2cBus):
-    global currentMeasurementMode
+    global buttonPressed
     print('Basic Mode selected. Press play when ready.')
     e1.set()
     while buttonPressed is not None and buttonPressed != 'Play':
         e1.set()
+    e2.wait()
     print('Play button pressed')
     
-
-
 
 
 def advancedMode(scope,i2cBus):
