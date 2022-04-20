@@ -46,13 +46,14 @@ def basicMode(scope,i2cBus):
     time.sleep(3)
     print('Single Shot Voltage selected. Press next to select next measurement mode or press play')
     measurementMode = measurementModes[0]
+    i = 1
     while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
         nextPressed = scope.readButton(i2cBus, 'B', 2)
-        i = 1
         if nextPressed == 0:
             measurementMode = measurementModes[i]
             print(measurementMode + ' selected. Press next to select next measurement mode or press play')
+            time.sleep(2)
             i += 1
             nextPressed = 1
     
