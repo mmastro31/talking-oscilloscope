@@ -33,7 +33,32 @@ buttonDict = {
     6: 'Next'
 }
 
-measurementModes = ['Single Shot Voltage', 'Single Shot Current', 'Continuous Voltage', 'Continuous Current', 'Digital IO 1', 'Digital IO 2']
+class SSV:
+    NAME = 'Single Shot Voltage'
+    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+
+class SSC:
+    NAME = 'Single Shot Current'
+    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+
+class CV:
+    NAME = 'Continuous Voltage'
+    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+
+class CC:
+    NAME = 'Continuous Current'
+    MOTOR = oscilloscope.Oscilloscope.motorList[1]
+
+class DIO1:
+    NAME = 'Digital IO 1'
+    MOTOR = oscilloscope.Oscilloscope.motorList[3]
+
+class DIO2:
+    NAME = 'Digital IO 2'
+    MOTOR = oscilloscope.Oscilloscope.motorList[4]
+
+
+measurementModes = [SSV, SSC, CV, CC, DIO1, DIO2]
 
 def basicMode(scope,i2cBus):
     global buttonPressed
@@ -52,19 +77,37 @@ def basicMode(scope,i2cBus):
         nextPressed = scope.readButton(i2cBus, 'B', 2)
         if nextPressed == 0:
             measurementMode = measurementModes[i]
-            print(measurementMode + ' selected. Press next to select next measurement mode or press play')
+            print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
             time.sleep(2)
             i += 1
             nextPressed = 1
             if i == 6:
                 i = 0
     
-    print('Welcome to ' + measurementMode)
+    print('Welcome to ' + measurementMode.NAME)
 
-
-
-
+    print('The positive port is now buzzing. Please connect your probe to the port.')
+    scope.buzzMotor(measurementMode.MOTOR)
+    print('Press play when you are done')
+    playPressed = 1
+    while playPressed != 0:
+        playPressed = scope.readButton(i2cBus, 'B', 1)
     
+    print('The negative port is now buzzing. Please connect your probe to the port.')
+    scope.buzzMotor(measurementMode.MODE)
+    print('Press play when you are done')
+    playPressed = 1
+    while playPressed != 0:
+        playPressed = scope.readButton(i2cBus, 'B', 1)
+
+    print('You are now ready to begin measuring. Press play when you are ready.')
+    playPressed = 1
+    while playPressed != 0:
+        playPressed = scope.readButton(i2cBus, 'B', 1)
+
+    value = measuring(scope,measurementMode)
+
+
 
 
 def advancedMode(scope,i2cBus):
@@ -76,6 +119,21 @@ def advancedMode(scope,i2cBus):
     else:
         print('Advanced Mode selected')
         e1.set()
+
+
+def measuring(scope, measurementMode):
+    value = 0
+    if measurementMode is SSV or measurementMode is SSC:
+        if measurementMode is SSV:
+            value = scope.measureVoltage()
+        elif measurementMode is SSC:
+            value = scope.measureCurrent()
+    elif measurementMode is CV or measurementMode is CC:
+        pass
+    elif measurementMode is DIO1 or measurementMode is DIO2:
+        pass 
+
+    return value
 
 
 
@@ -95,23 +153,18 @@ def monitorSwitch(scope,i2cBus):
         time.sleep(1)
 
 
-def monitorButtons(scope,i2cBus):
-    global buttonPressed
-    while e1.isSet():
+def monitorHome(scope,i2cBus):
+    global currentMode
+    while True:
         l1.acquire()
-        A,B = scope.readAllButtons(i2cBus)
-        print(A, B)
-        try:
-            buttonPressed = buttonDict[A]
-            e1.clear()
-        except:
-            pass
-
-        try:
-            buttonPressed = buttonDict[B]
-            e1.clear()
-        except:
-            pass
+        home = scope.readButton(i2cBus, 'B', 0)
+        if home == 0:
+            print('Going Home')
+            if currentMode == 1:
+                basicMode(scope,i2cBus)
+            elif currentMode == 0:
+                advancedMode(scope,i2cBus)
+            home = 1
         l1.release()
         time.sleep(1)
 
@@ -145,7 +198,7 @@ if __name__ == "__main__":
     t1 = Thread(target = monitorSwitch, args=(scope,i2cBus))
     t1.daemon = True
     t1.start()
-    t2 = Thread(target = monitorButtons, args=(scope,i2cBus))
+    t2 = Thread(target = monitorHome, args=(scope,i2cBus))
     t2.daemon = True
     t2.start()
     t1.join()
