@@ -38,10 +38,10 @@ def ToBePastedintoApp(Oscilloscope):
 
     scope = Oscilloscope
     count_spaces = "1234567891123456789"
-    welcome = "Welcome to the Talking"
-    welcome2 = "Oscilloscope."
+    welcome = "Welcome to the"
+    welcome2 = "Talking Oscilloscope"
     welcome3 = "Oscilloscope."
-    Basic_mode = "You are currently in" 
+    Basic_mode = "You are currently in"
     Basic_mode2 = "Basic Mode."
     Advanced_mode = "You are currently in Advanced Mode."
     press_play = "Press Play to continue."
@@ -52,14 +52,14 @@ def ToBePastedintoApp(Oscilloscope):
     measurement = "_______ Amps/Volts"  #depends on the measurement, this is kinda useless
     after_m = "Press Play to repeat the value, Next to read a new value, or Home to go back to the main menu."
 
-    scope.displayText(count_spaces,True,0,0,14)
-    scope.displayText(welcome,True,5,15,14)
-    scope.displayText(welcome2,True,5,30,14)
+    #scope.displayText(count_spaces,True,0,0,14)
+    scope.displayText(welcome,True,25,30,14)
+    scope.displayText(welcome2,True,5,45,14)
     #scope.displayText(welcome3,True,10,60)
 
-    scope.displayText(Basic_mode,True,5,100,14)
-    scope.displayText(Basic_mode2,True,5,115,14)
-    time.sleep(60)
+    scope.displayText(Basic_mode,True,10,90,14)
+    scope.displayText(Basic_mode2,True,40,105,14)
+    time.sleep(3)
     '''
     scope.displayText(Basic_mode,True,50,50)
     scope.displayText(press_play,True,100,100)
