@@ -335,8 +335,8 @@ class Oscilloscope:
 
         # Draw a black filled box as the background
         # technically redundant as clearDisplay does the same thing
-        self.draw.rectangle((0, 0, self.width, self.height), fill=(0, 0, 0))
-        self.disp.image(self.image)
+        #self.draw.rectangle((0, 0, self.width, self.height), fill=(0, 0, 0))
+        #self.disp.image(self.image)
 
         # Load a TTF Font
         font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
