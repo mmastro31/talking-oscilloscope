@@ -45,7 +45,7 @@ def ToBePastedintoApp(Oscilloscope):
     scope.displayText(Advanced_mode,True,30,30)
     scope.displayText(Basic_mode,True,50,50)
     scope.displayText(press_play,True,100,100)
-    time.sleep(5)
+    time.sleep(10)
     scope.clearDisplay()
     scope.displayText(mode_cycle)
     time.sleep(5)
