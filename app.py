@@ -175,7 +175,7 @@ def basicMode(scope,i2cBus):
             value = str(value)    
         scope.displayText(value,False,0,0,14)     #displays values for either Single Shot or DigitalIO
         scope.displayText(bd_menu,True,8,110,12)
-        scope.createWav(value, 'measurement.wav')
+        scope.createWav(value, 'measurement')
         time.sleep(4)
         scope.playSound('measurement.wav')
     else:
