@@ -6,6 +6,7 @@ scope.setupSound()
 
 voices = scope.engine.getProperty('voices')
 for voice in voices:
+   print(voice, voice.id)
    scope.engine.setProperty('voice', voice.id)
    scope.engine.say('The quick brown fox jumped over the lazy dog.')
 scope.engine.runAndWait()
