@@ -116,8 +116,7 @@ def tftDisplayMenuSelection(Oscilloscope):
         print("================================\n")
         print("            TEST APP.py\n")
         print("================================\n")
-        tftDisplayMenuSelection(Oscilloscope)
-        return
+        ToBePastedintoApp(Oscilloscope)
     elif (option == "7"):
         print("================================\n")
         print("            EXITING\n")
