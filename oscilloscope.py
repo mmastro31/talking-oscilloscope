@@ -113,7 +113,7 @@ class Oscilloscope:
         #measure voltage with sensor
         voltage = self.CurrentSensor.voltage
         #print("Voltage: %.2f " %(voltage) + "V")
-        return voltage
+        return round(voltage, 3)
 
     def measurePower(self):
         #measure power with sensor
