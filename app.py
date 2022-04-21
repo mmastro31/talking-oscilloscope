@@ -27,7 +27,7 @@ class SSV:
     NAME = 'Single Shot Voltage'
     FILE = '1.wav'
     MOTOR = 1
-    GO_NEXT = '8.wav'
+    GO_NEXT = '9.wav'
     WELCOME = '22.wav'
 
 class SSC:
@@ -75,17 +75,17 @@ def basicMode(scope,i2cBus):
     scope.displayText("You are currently in",True,10,40,14)     #displays basic mode
     scope.displayText("Basic Mode",True,40,55,14)
     scope.displayText(bd_menu,True,8,110,12)
-    time.sleep(3)
-    scope.playSound('7.wav')
+    time.sleep(2)
     print('Basic Mode selected. Press play when ready.')
+    scope.playSound('7.wav')
     playPressed = scope.readButton(i2cBus, 'B', 1)
     while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
     print('Play button pressed')
     playPressed = 1
     time.sleep(3)
-    scope.playSound('9.wav')
     print('Single Shot Voltage selected. Press next to select next measurement mode or press play')
+    scope.playSound('9.wav')
     measurementMode = measurementModes[0]
     scope.clearDisplay()
     scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode (mm = measruement)
@@ -176,7 +176,7 @@ def basicMode(scope,i2cBus):
         scope.displayText(value,False,0,0,14)     #displays values for either Single Shot or DigitalIO
         scope.displayText(bd_menu,True,8,110,12)
         scope.createWav(value, 'measurement.wav')
-        time.sleep(2)
+        time.sleep(4)
         scope.playSound('measurement.wav')
     else:
         for i in value:
@@ -184,6 +184,8 @@ def basicMode(scope,i2cBus):
             scope.displayText(answer,False,0,0,14)     #displays values for Continous
             scope.displayText(bd_menu,True,8,110,12)    #Needs fixing
     time.sleep(3)
+
+    #Create loop to ask: Play = take another measurement, Next = Replay measurement, Home = goes home
 
 
 
