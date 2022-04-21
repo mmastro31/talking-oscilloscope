@@ -23,31 +23,47 @@ e1 = Event()
 e2 = Event()
 l1 = Lock()  #lock to control i2c bus
 
-
 class SSV:
     NAME = 'Single Shot Voltage'
+    FILE = '1.wav'
     MOTOR = 1
+    GO_NEXT = '8.wav'
+    WELCOME = '22.wav'
 
 class SSC:
     NAME = 'Single Shot Current'
+    FILE = '2.wav'
     MOTOR = 1
+    GO_NEXT = '17.wav'
+    WELCOME = '23.wav'
 
 class CV:
     NAME = 'Continuous Voltage'
+    FILE = '3.wav'
     MOTOR = 1
+    GO_NEXT = '18.wav'
+    WELCOME = '24.wav'
 
 class CC:
     NAME = 'Continuous Current'
+    FILE = '4.wav'
     MOTOR = 1
+    GO_NEXT = '19.wav'
+    WELCOME = '25.wav'
 
 class DIO1:
     NAME = 'Digital IO 1'
+    FILE = '5.wav'
     MOTOR = 3
+    GO_NEXT = '20.wav'
+    WELCOME = '26.wav'
 
 class DIO2:
     NAME = 'Digital IO 2'
+    FILE = '6.wav'
     MOTOR = 4
-
+    GO_NEXT = '21.wav'
+    WELCOME = '27.wav'
 
 measurementModes = [SSV, SSC, CV, CC, DIO1, DIO2]
 
@@ -60,7 +76,7 @@ def basicMode(scope,i2cBus):
     scope.displayText("Basic Mode",True,40,55,14)
     scope.displayText(bd_menu,True,8,110,12)
     time.sleep(3)
-
+    scope.playSound('7.wav')
     print('Basic Mode selected. Press play when ready.')
     playPressed = scope.readButton(i2cBus, 'B', 1)
     while playPressed != 0:
@@ -68,6 +84,7 @@ def basicMode(scope,i2cBus):
     print('Play button pressed')
     playPressed = 1
     time.sleep(3)
+    scope.playSound('8.wav')
     print('Single Shot Voltage selected. Press next to select next measurement mode or press play')
     measurementMode = measurementModes[0]
     scope.clearDisplay()
@@ -81,6 +98,7 @@ def basicMode(scope,i2cBus):
         if nextPressed == 0:
             measurementMode = measurementModes[i]
             print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
+            scope.playSound(measurementMode.GO_NEXT)
             scope.clearDisplay()
             scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode
             scope.displayText(bd_menu,True,8,110,12)
@@ -91,6 +109,7 @@ def basicMode(scope,i2cBus):
                 i = 0
     
     print('Welcome to ' + measurementMode.NAME)
+    scope.playSound(measurementMode.WELCOME)
     scope.clearDisplay()
     scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode
     scope.displayText("Selected",True,50,70,14)
@@ -98,8 +117,10 @@ def basicMode(scope,i2cBus):
     time.sleep(3)
 
     print('The positive port is now buzzing. Please connect your probe to the port.')
+    scope.playSound('12.wav')
     scope.buzzMotor(measurementMode.MOTOR)
     print('Press play when you are done')
+    scope.playSound('13.wav')
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)     #displays instructions
     scope.displayText("Connect + Port",True,25,55,14)
@@ -110,8 +131,10 @@ def basicMode(scope,i2cBus):
         playPressed = scope.readButton(i2cBus, 'B', 1)
     
     print('The negative port is now buzzing. Please connect your probe to the port.')
+    scope.playSound('14.wav')
     scope.buzzMotor(measurementMode.MOTOR)
     print('Press play when you are done')
+    scope.playSound('13.wav')
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)     #displays instructions
     scope.displayText("Connect + Port",True,25,55,14)
@@ -122,6 +145,7 @@ def basicMode(scope,i2cBus):
         playPressed = scope.readButton(i2cBus, 'B', 1)
 
     print('You are now ready to begin measuring. Press play when you are ready.')
+    scope.playSound('15.wav')
     scope.clearDisplay()
     scope.displayText("READY!",False,0,0,16)     #displays "Ready!"
     #scope.displayText(bd_menu,True,8,110,12)
@@ -151,6 +175,9 @@ def basicMode(scope,i2cBus):
             value = str(value)    
         scope.displayText(value,False,0,0,14)     #displays values for either Single Shot or DigitalIO
         scope.displayText(bd_menu,True,8,110,12)
+        scope.createWav(value, 'measurement.wav')
+        time.sleep(2)
+        scope.playSound('measurement.wav')
     else:
         for i in value:
             answer = str(i)
