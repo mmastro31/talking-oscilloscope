@@ -33,7 +33,7 @@ lines = [
 
 scope.engine.setProperty('voice', 'english_rp+f3')
 scope.engine.say('The quick brown fox jumped over the lazy dog.')
-
+scope.engine.runAndWait()
 '''
 for i in range(len(lines)):
     scope.createWav(lines[i], str(i+1))
