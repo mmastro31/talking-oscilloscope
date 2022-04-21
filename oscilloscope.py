@@ -82,11 +82,11 @@ class Oscilloscope:
         self.mixer = None
         GPIO.setmode(GPIO.BCM)   
         self.engine = pyttsx3.init()
+
         #TFT Display Global Variables
-        #image,draw,disp,backlight,width,height
-        image = None 
-        draw = None
-        disp = None
+        image = None    #The image to be printed (everything included)
+        draw = None     #Tool to print onto the display
+        disp = None     #Setting up the specific model of the tft display
         backlight = None
         width = None
         height = None
@@ -298,7 +298,7 @@ class Oscilloscope:
         self.backlight.value = True
 
     def displayImage(self,imageFile):
-        self.clearDisplay()
+        #self.clearDisplay()
 
         #Try to load in image but if filename doesnt exist, return
         try:
@@ -327,7 +327,7 @@ class Oscilloscope:
         self.disp.image(self.image)
 
     def displayText(self,text):
-        self.clearDisplay()
+        #self.clearDisplay()
 
         # First define some constants to allow easy resizing of shapes.
         BORDER = 32
