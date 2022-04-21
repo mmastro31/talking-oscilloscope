@@ -149,7 +149,7 @@ class Oscilloscope:
             print("File {} not found! {}".format(filename, pg.get_error()))
             return
             
-        self.mixer.music.play(loops = 0)
+        #self.mixer.music.play(loops = 0)
 
     # pauses any playing audio
     def pauseSound(self):
