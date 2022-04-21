@@ -27,29 +27,9 @@ scope = oscilloscope.Oscilloscope()
 scope.setupSound()
 
 scope.engine.setProperty('rate', 175)
-scope.engine.setProperty('voice', 'english+f1')
-scope.engine.say('Hello World')
-scope.engine.runAndWait()
-scope.engine.setProperty('voice', 'english+f2')
-scope.engine.say('Hello World')
-scope.engine.runAndWait()
-scope.engine.setProperty('voice', 'english+f3')
-scope.engine.say('Hello World')
-scope.engine.runAndWait()
 scope.engine.setProperty('voice', 'english+f4')
-scope.engine.say('Hello World')
-scope.engine.runAndWait()
-scope.engine.setProperty('voice', 'english_rp+f3') #my preference
-scope.engine.say('Hello World')
-scope.engine.runAndWait()
-scope.engine.setProperty('voice', 'english_rp+f4')
-scope.engine.say('Hello World')
-scope.engine.runAndWait()
 
-'''
 scope.createWav(lines[0], '1')
 scope.engine.runAndWait()
 
 time.sleep(10)
-
-'''
