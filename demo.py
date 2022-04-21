@@ -62,7 +62,8 @@ def tftDisplayMenuSelection(Oscilloscope):
     print("   3 - GRAPH [not yet ready]\n")
     print("   4 - OFF\n")
     print("   5 - ON [not necessary if already on]\n")  # Dont know if i need this given if it was turned off prior
-    print("   6 - EXIT\n")
+    print("   6 - Test for app.py")
+    print("   7 - EXIT")
     option = input("Please select one:")
     option.strip()
 
@@ -105,6 +106,12 @@ def tftDisplayMenuSelection(Oscilloscope):
         print("================================\n")
         Oscilloscope.displayOn()
     elif (option == "6"):
+        print("================================\n")
+        print("            TEST APP.py\n")
+        print("================================\n")
+        tftDisplayMenuSelection(Oscilloscope)
+        return
+    elif (option == "7"):
         print("================================\n")
         print("            EXITING\n")
         print("================================\n")
