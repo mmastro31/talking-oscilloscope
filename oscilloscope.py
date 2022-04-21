@@ -132,7 +132,8 @@ class Oscilloscope:
         self.mixer = pg.mixer
         self.mixer.init(freq, bitsize, channels, buffer)
         # default starting volume will be 20%
-
+        self.engine.setProperty('rate', 175)
+        self.engine.setProperty('voice', 'english+f4')
         soundLevel = self.checkVolume()
         self.mixer.music.set_volume(0.2)
 

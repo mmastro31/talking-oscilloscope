@@ -97,8 +97,8 @@ def basicMode(scope,i2cBus):
         nextPressed = scope.readButton(i2cBus, 'B', 2)
         if nextPressed == 0:
             measurementMode = measurementModes[i]
-            scope.playSound(measurementMode.GO_NEXT)
             print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
+            scope.playSound(measurementMode.GO_NEXT)
             scope.clearDisplay()
             scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode
             scope.displayText(bd_menu,True,8,110,12)
