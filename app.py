@@ -84,7 +84,7 @@ def basicMode(scope,i2cBus):
     print('Play button pressed')
     playPressed = 1
     time.sleep(3)
-    scope.playSound('8.wav')
+    scope.playSound('9.wav')
     print('Single Shot Voltage selected. Press next to select next measurement mode or press play')
     measurementMode = measurementModes[0]
     scope.clearDisplay()
@@ -97,27 +97,27 @@ def basicMode(scope,i2cBus):
         nextPressed = scope.readButton(i2cBus, 'B', 2)
         if nextPressed == 0:
             measurementMode = measurementModes[i]
-            print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
             scope.playSound(measurementMode.GO_NEXT)
+            print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
             scope.clearDisplay()
             scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode
             scope.displayText(bd_menu,True,8,110,12)
-            time.sleep(2)
+            time.sleep(1)
             i += 1
             nextPressed = 1
             if i == 6:
                 i = 0
-    
-    print('Welcome to ' + measurementMode.NAME)
+
     scope.playSound(measurementMode.WELCOME)
+    print('Welcome to ' + measurementMode.NAME)
     scope.clearDisplay()
     scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode
     scope.displayText("Selected",True,50,70,14)
     scope.displayText(bd_menu,True,8,110,12)
-    time.sleep(3)
+    time.sleep(2)
 
-    print('The positive port is now buzzing. Please connect your probe to the port.')
     scope.playSound('12.wav')
+    print('The positive port is now buzzing. Please connect your probe to the port.')
     scope.buzzMotor(measurementMode.MOTOR)
     print('Press play when you are done')
     scope.playSound('13.wav')
