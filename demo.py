@@ -28,8 +28,13 @@ def currentSensorTest(Oscilloscope,i2c):
     print('Oscilloscope shutdown.')
 
 def ToBePastedintoApp(Oscilloscope):
+    #There is a Max of 14 spaces for characters across the x-axis for the display
+    #  (w/ font-size at 32, but any lower and its too small to read)
     scope = Oscilloscope
-    welcome = "Welcome to the Talking-Assisted Oscilloscope."
+    count_spaces = "1234567891123456789"
+    welcome = "Welcome to the"
+    welcome2 = "Talking"
+    welcome3 = "Oscilloscope."
     Basic_mode = "You are currently in Basic Mode."
     Advanced_mode = "You are currently in Advanced Mode."
     press_play = "Press Play to continue."
@@ -40,9 +45,15 @@ def ToBePastedintoApp(Oscilloscope):
     measurement = "_______ Amps/Volts"  #depends on the measurement, this is kinda useless
     after_m = "Press Play to repeat the value, Next to read a new value, or Home to go back to the main menu."
 
-    scope.displayText(welcome,True,0,0)
-    scope.displayText(Basic_mode,True,10,10)
-    scope.displayText(Advanced_mode,True,30,30)
+    scope.displayText(count_spaces,True,0,0)
+    scope.displayText(welcome,True,10,20)
+    scope.displayText(welcome2,True,10,40)
+    scope.displayText(welcome3,True,10,60)
+
+    scope.displayText(Basic_mode,True,10,100,12)
+    scope.displayText(Advanced_mode,True,30,110,10)
+    time.sleep(60)
+    '''
     scope.displayText(Basic_mode,True,50,50)
     scope.displayText(press_play,True,100,100)
     time.sleep(10)
@@ -51,7 +62,6 @@ def ToBePastedintoApp(Oscilloscope):
     time.sleep(5)
     scope.clearDisplay()
     scope.displayText(mode_selected)
-    '''
     scope.displayText(mode_selection)
     scope.displayText(prob)
     scope.displayText(measurement)
