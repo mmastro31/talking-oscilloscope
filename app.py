@@ -163,6 +163,11 @@ def basicMode(scope,i2cBus):
 
 def advancedMode(scope,i2cBus):
     global currentMeasurementMode
+    scope.clearDisplay()
+    scope.displayText("You are currently in",True,10,40,14)     #displays basic mode
+    scope.displayText("Advanced Mode",True,35,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    time.sleep(3)
     if currentMeasurementMode == None:
         #First Time running program
         print('Welcome to Advanced Mode. Please select a measurement')
@@ -170,6 +175,8 @@ def advancedMode(scope,i2cBus):
     else:
         print('Advanced Mode selected')
         e1.set()
+
+    
 
 
 def measuring(scope, measurementMode, i2cBus):
