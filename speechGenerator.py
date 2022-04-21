@@ -1,8 +1,7 @@
 import oscilloscope
 import time
+import pyttsx3
 
-scope = oscilloscope.Oscilloscope()
-scope.setupSound()
 
 
 lines = [
@@ -24,11 +23,14 @@ lines = [
     'Welcome to Advanced Mode. Please select a measurement',
 ]
 
+scope = oscilloscope.Oscilloscope()
+scope.setupSound()
+
+
 scope.engine.setProperty('voice', 'english_rp+f3')
 scope.engine.setProperty('rate', 175)
 
-for i in range(len(lines)):
-    scope.createWav(lines[i], str(i+1))
-    time.sleep(5)
-
+scope.createWav(lines[0], '1')
 scope.engine.runAndWait()
+
+time.sleep(10)
