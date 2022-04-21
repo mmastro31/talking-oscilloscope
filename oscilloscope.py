@@ -298,7 +298,7 @@ class Oscilloscope:
         self.backlight.value = True
 
     def displayImage(self,imageFile):
-        #self.clearDisplay()
+        self.clearDisplay()
 
         #Try to load in image but if filename doesnt exist, return
         try:
@@ -326,12 +326,12 @@ class Oscilloscope:
         # Display image.
         self.disp.image(self.image)
 
-    def displayText(self,text):
+    def displayText(self,text,custom=False,x=0,y=0,font_size=18):
         #self.clearDisplay()
 
         # First define some constants to allow easy resizing of shapes.
         BORDER = 32
-        FONTSIZE = 18
+        FONTSIZE = font_size
 
         # Draw a black filled box as the background
         # technically redundant as clearDisplay does the same thing
@@ -343,8 +343,11 @@ class Oscilloscope:
 
         # Draw Some Text
         (font_width, font_height) = font.getsize(text)
-        self.draw.text((self.width // 2 - font_width // 2, self.height // 2 - font_height // 2),text,font=font,fill=(255, 255, 0),)
-
+        if custom == True:
+            self.draw.text((x,y),text,font=font,fill=(255, 255, 0),)
+        else:
+            self.draw.text((self.width // 2 - font_width // 2, self.height // 2 - font_height // 2),text,font=font,fill=(255, 255, 0),)
+        
         # Display image.
         self.disp.image(self.image)
 

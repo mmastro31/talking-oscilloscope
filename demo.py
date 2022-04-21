@@ -40,17 +40,24 @@ def ToBePastedintoApp(Oscilloscope):
     measurement = "_______ Amps/Volts"  #depends on the measurement, this is kinda useless
     after_m = "Press Play to repeat the value, Next to read a new value, or Home to go back to the main menu."
 
-    scope.displayText(welcome)
-    scope.displayText(Basic_mode)
-    scope.displayText(Advanced_mode)
-    scope.displayText(Basic_mode)
-    scope.displayText(press_play)
+    scope.displayText(welcome,True,0,0)
+    scope.displayText(Basic_mode,True,10,10)
+    scope.displayText(Advanced_mode,True,30,30)
+    scope.displayText(Basic_mode,True,50,50)
+    scope.displayText(press_play,True,100,100)
+    time.sleep(5)
+    scope.clearDisplay()
     scope.displayText(mode_cycle)
+    time.sleep(5)
+    scope.clearDisplay()
     scope.displayText(mode_selected)
+    '''
     scope.displayText(mode_selection)
     scope.displayText(prob)
     scope.displayText(measurement)
     scope.displayText(after_m)
+    '''
+    
 
     return
 
