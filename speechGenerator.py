@@ -3,13 +3,14 @@ import time
 
 scope = oscilloscope.Oscilloscope()
 scope.setupSound()
-
+'''
 voices = scope.engine.getProperty('voices')
 for voice in voices:
    print(voice, voice.id)
    scope.engine.setProperty('voice', voice.id)
    scope.engine.say('The quick brown fox jumped over the lazy dog.')
 scope.engine.runAndWait()
+'''
 
 lines = [
     'Single Shot Voltage',
@@ -29,6 +30,9 @@ lines = [
     'You are now ready to begin measuring. Press play when you are ready.',
     'Welcome to Advanced Mode. Please select a measurement',
 ]
+
+scope.engine.setProperty('voice', 'english_rp+f3')
+scope.engine.say('The quick brown fox jumped over the lazy dog.')
 
 '''
 for i in range(len(lines)):
