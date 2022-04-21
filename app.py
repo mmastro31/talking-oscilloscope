@@ -16,6 +16,8 @@ global currentMeasurementMode
 currentMeasurementMode = None
 global buttonPressed
 buttonPressed = None
+global bd_menu      #Button Display Menu - just to print the buttons at the bottom of the display like a mini menu
+bd_menu = "Home       Play       Next"
 
 e1 = Event()
 e2 = Event()
@@ -51,6 +53,14 @@ measurementModes = [SSV, SSC, CV, CC, DIO1, DIO2]
 
 def basicMode(scope,i2cBus):
     global buttonPressed
+    global bd_menu
+
+    scope.clearDisplay()
+    scope.displayText("You are currently in",True,10,40,14)     #displays basic mode
+    scope.displayText("Basic Mode",True,40,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    time.sleep(3)
+
     print('Basic Mode selected. Press play when ready.')
     playPressed = scope.readButton(i2cBus, 'B', 1)
     while playPressed != 0:
@@ -60,6 +70,10 @@ def basicMode(scope,i2cBus):
     time.sleep(3)
     print('Single Shot Voltage selected. Press next to select next measurement mode or press play')
     measurementMode = measurementModes[0]
+    scope.clearDisplay()
+    scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode (mm = measruement)
+    scope.displayText(bd_menu,True,8,110,12)
+    time.sleep(3)
     i = 1
     while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
@@ -67,6 +81,9 @@ def basicMode(scope,i2cBus):
         if nextPressed == 0:
             measurementMode = measurementModes[i]
             print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
+            scope.clearDisplay()
+            scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode
+            scope.displayText(bd_menu,True,8,110,12)
             time.sleep(2)
             i += 1
             nextPressed = 1
@@ -74,10 +91,20 @@ def basicMode(scope,i2cBus):
                 i = 0
     
     print('Welcome to ' + measurementMode.NAME)
+    scope.clearDisplay()
+    scope.displayText(measurementMode.NAME,False,0,0,14)     #displays mm mode
+    scope.displayText("Selected",True,50,70,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    time.sleep(3)
 
     print('The positive port is now buzzing. Please connect your probe to the port.')
     scope.buzzMotor(measurementMode.MOTOR)
     print('Press play when you are done')
+    scope.clearDisplay()
+    scope.displayText("BUZZ!",True,60,40,14)     #displays instructions
+    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    time.sleep(2)
     playPressed = 1
     while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
@@ -85,19 +112,51 @@ def basicMode(scope,i2cBus):
     print('The negative port is now buzzing. Please connect your probe to the port.')
     scope.buzzMotor(measurementMode.MOTOR)
     print('Press play when you are done')
+    scope.clearDisplay()
+    scope.displayText("BUZZ!",True,60,40,14)     #displays instructions
+    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    time.sleep(2)
     playPressed = 1
     while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
 
     print('You are now ready to begin measuring. Press play when you are ready.')
-    time.sleep(1)
+    scope.clearDisplay()
+    scope.displayText("READY!",False,0,0,16)     #displays "Ready!"
+    #scope.displayText(bd_menu,True,8,110,12)
+    time.sleep(2)
     playPressed = 1
     while playPressed != 0:
         playPressed = scope.readButton(i2cBus, 'B', 1)
 
     value = measuring(scope,measurementMode,i2cBus)
-
     print(value)
+    
+    scope.clearDisplay()
+    if isinstance(value, int) or isinstance(value, float):
+        if measurementMode.NAME == 'Single Shot Voltage' and value >= 0.01:
+            value = str(value)
+            value += " V"
+        elif measurementMode.NAME == 'Single Shot Voltage' and value < 0.01:
+            value = str(value)
+            value += " mV"
+        elif measurementMode.NAME == 'Single Shot Current' and value >= 0.01:
+            value = str(value)
+            value += " A"
+        elif measurementMode.NAME == 'Single Shot Current' and value < 0.01:
+            value = str(value)
+            value += " mA"
+        elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
+            value = str(value)    
+        scope.displayText(value,False,0,0,14)     #displays values for either Single Shot or DigitalIO
+        scope.displayText(bd_menu,True,8,110,12)
+    else:
+        for i in value:
+            answer = str(i)
+            scope.displayText(answer,False,0,0,14)     #displays values for Continous
+            scope.displayText(bd_menu,True,8,110,12)    #Needs fixing
+    time.sleep(3)
 
 
 
@@ -180,9 +239,15 @@ def onStart(scope,i2c,spi,i2cBus):
     scope.setupSound()
     scope.setupCurrentSensor(i2c)
     scope.setupMotors()
-    #scope.setupDisplay(spi)
     scope.setupDigitalPins()
     scope.setupButtons(i2cBus)
+    scope.setupDisplay(spi)
+
+    scope.displayText("Welcome to the",True,25,30,14)
+    scope.displayText("Talking Oscilloscope",True,8,45,14)
+    scope.displayText("Booting...",True,50,90,14)
+    time.sleep(5)
+
 
 
 if __name__ == "__main__":
