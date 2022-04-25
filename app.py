@@ -294,13 +294,7 @@ if __name__ == "__main__":
     scope = oscilloscope.Oscilloscope()
     onStart(scope,i2c,spi,i2cBus)
 
-    #Determine if Oscilloscope is in Basic or Advanced Mode based on switch placement
     currentMode = scope.readButton(i2cBus, 'B', 3)
-    if currentMode:
-        basicMode(scope,i2cBus)  #Enter Basic Mode
-    else:
-        advancedMode(scope,i2cBus) #Enter Advanced Mode
-
     #Starting Threads
     t1 = Thread(target = monitorSwitch, args=(scope,i2cBus))
     t1.daemon = True
@@ -311,6 +305,11 @@ if __name__ == "__main__":
     t1.join()
     t2.join()
 
+    #Determine if Oscilloscope is in Basic or Advanced Mode based on switch placement
+    if currentMode:
+        basicMode(scope,i2cBus)  #Enter Basic Mode
+    else:
+        advancedMode(scope,i2cBus) #Enter Advanced Mode
 
 
     #app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
