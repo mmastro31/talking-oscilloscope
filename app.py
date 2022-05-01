@@ -71,13 +71,10 @@ def basicButtons(scope,i2cBus):
     homePressed = 1
     playPressed = 1
     nextPressed = 1
-    while playPressed != 0 or homePressed != 0 or nextPressed != 0:
+    while playPressed != 0 and homePressed != 0 and nextPressed != 0:
         homePressed = scope.readButton(i2cBus, 'B', 0)
-        time.sleep(0.01)
         playPressed = scope.readButton(i2cBus, 'B', 1)
-        time.sleep(0.01)
         nextPressed = scope.readButton(i2cBus, 'B', 2)
-        time.sleep(0.01)
     return (homePressed, playPressed, nextPressed)
 
 def state0(scope,measurementMode):
