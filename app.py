@@ -65,32 +65,85 @@ class DIO2:
     GO_NEXT = '21.wav'
     WELCOME = '27.wav'
 
-          #home, play, next
-basicState = { 0: [0,1,0], #0 - press play when ready
-               1: [0,7,2], #1 - SSV
-               2: [0,7,3], #2 - SS
-               3: [0,7,4], #3 - CV
-              4: [0,7,5], #4 - CC
-              5: [0,7,6], #5 - DIO1
-              6: [0,7,1], #6 - DIO2
-              7: [0,8,7], #7 - connect probe 1
-              8: [0,9,8], #8 - connect probe 2
-              9: [0,10,9], #9 - wait to measure
-              10: [0,9,10]} #10 - done measuring
-
-
 measurementModes = [SSV, SSC, CV, CC, DIO1, DIO2]
 
 def basicButtons(scope,i2cBus):
-    homePressed = scope.readButton(i2cBus, 'B', 0)
-    playPressed = scope.readButton(i2cBus, 'B', 1)
-    nextPressed = scope.readButton(i2cBus, 'B', 2)
+    homePressed = 1
+    playPressed = 1
+    nextPressed = 1
     while playPressed != 0 or homePressed != 0 or nextPressed != 0:
         homePressed = scope.readButton(i2cBus, 'B', 0)
         playPressed = scope.readButton(i2cBus, 'B', 1)
         nextPressed = scope.readButton(i2cBus, 'B', 2)
     return (homePressed, playPressed, nextPressed)
 
+def state0(scope,measurementMode):
+    scope.clearDisplay()
+    scope.displayText("You are currently in",True,10,40,14)
+    scope.displayText("Basic Mode",True,40,55,14)
+    scope.displayText(bd_menu,True,8,110,12),print('Basic Mode selected. Press play when ready.')
+    scope.playSound('7.wav')
+
+def state1to6(scope,measurementMode):
+    print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
+    scope.playSound(measurementMode.GO_NEXT)
+    scope.clearDisplay()
+    scope.displayText(measurementMode.NAME,False,0,0,14) 
+    scope.displayText(bd_menu,True,8,110,12)
+
+def state7(scope,measurementMode):
+    scope.playSound(measurementMode.WELCOME)
+    print('Welcome to ' + measurementMode.NAME)
+    scope.clearDisplay()
+    scope.displayText(measurementMode.NAME,False,0,0,14)
+    scope.displayText("Selected",True,50,70,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    scope.playSound('12.wav')
+    print('The positive port is now buzzing. Please connect your probe to the port.')
+    scope.buzzMotor(measurementMode.MOTOR)
+    scope.clearDisplay()
+    scope.displayText("BUZZ!",True,60,40,14)
+    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    print('Press play when you are done')
+    scope.playSound('13.wav')
+
+def state8(scope,measurementMode):
+    print('The negative port is now buzzing. Please connect your probe to the port.')
+    scope.playSound('14.wav')
+    scope.buzzMotor(measurementMode.MOTOR)
+    scope.clearDisplay()
+    scope.displayText("BUZZ!",True,60,40,14)
+    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    print('Press play when you are done')
+    scope.playSound('13.wav')
+
+def state9(scope,measurementMode):
+    print('You are now ready to begin measuring. Press play when you are ready.')
+    scope.playSound('15.wav')
+    scope.clearDisplay()
+    scope.displayText("READY!",False,0,0,16)
+
+def state10(scope,measuremntMode,value):
+    scope.displayText(value,False,0,0,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    scope.createWav(value, 'measurement')
+    time.sleep(4)
+    scope.playSound('measurement.wav')
+
+          #home, play, next,  function call
+basicState = { 0: [0,1,0,state0], #0 - press play when ready
+               1: [0,7,2,state1to6], #1 - SSV
+               2: [0,7,3,state1to6], #2 - SS
+               3: [0,7,4,state1to6], #3 - CV
+              4: [0,7,5,state1to6], #4 - CC
+              5: [0,7,6,state1to6], #5 - DIO1
+              6: [0,7,1,state1to6], #6 - DIO2
+              7: [0,8,7,state7], #7 - connect probe 1
+              8: [0,9,8,state8], #8 - connect probe 2
+              9: [0,10,9,state9], #9 - wait to measure
+              10: [0,9,10,state10]} #10 - done measuring
 
 def basicMode(scope,i2cBus):
 
@@ -105,25 +158,18 @@ def basicMode(scope,i2cBus):
     measurementMode = measurementModes[0]
     value = None
 
-    stateTasks = {0: [scope.clearDisplay(),scope.displayText("You are currently in",True,10,40,14),scope.displayText("Basic Mode",True,40,55,14),scope.displayText(bd_menu,True,8,110,12),print('Basic Mode selected. Press play when ready.'), scope.playSound('7.wav')],
-                  1: [print('Single Shot Voltage selected. Press next to select next measurement mode or press play'),scope.playSound('9.wav'),scope.clearDisplay(),scope.displayText('Single Shot Voltage',False,0,0,14), scope.displayText(bd_menu,True,8,110,12)],
-                  2: [print('Single Shot Current selected. Press next to select next measurement mode or press play'),scope.playSound('17.wav'),scope.clearDisplay(),scope.displayText('Single Shot Current',False,0,0,14), scope.displayText(bd_menu,True,8,110,12)],
-                  3: [print('Continuous Voltage selected. Press next to select next measurement mode or press play'),scope.playSound('18.wav'),scope.clearDisplay(),scope.displayText('Continuous Voltage',False,0,0,14), scope.displayText(bd_menu,True,8,110,12)],
-                  4: [print('Continuous Current selected. Press next to select next measurement mode or press play'),scope.playSound('19.wav'),scope.clearDisplay(),scope.displayText('Continuous Current',False,0,0,14), scope.displayText(bd_menu,True,8,110,12)],
-                  5: [print('Digital IO 1 selected. Press next to select next measurement mode or press play'),scope.playSound('20.wav'),scope.clearDisplay(),scope.displayText('Digital IO 1',False,0,0,14), scope.displayText(bd_menu,True,8,110,12)],
-                  6: [print('Digital IO 2 selected. Press next to select next measurement mode or press play'),scope.playSound('21.wav'),scope.clearDisplay(),scope.displayText('Digital IO 2',False,0,0,14), scope.displayText(bd_menu,True,8,110,12)],
-                  7: [scope.playSound(measurementMode.WELCOME), print('Welcome to ' + measurementMode.NAME), scope.clearDisplay(), scope.displayText(measurementMode.NAME,False,0,0,14) , scope.displayText("Selected",True,50,70,14), scope.displayText(bd_menu,True,8,110,12),scope.playSound('12.wav'), print('The positive port is now buzzing. Please connect your probe to the port.'),scope.buzzMotor(measurementMode.MOTOR), scope.clearDisplay(), scope.displayText("BUZZ!",True,60,40,14),scope.displayText("Connect + Port",True,25,55,14), scope.displayText(bd_menu,True,8,110,12),print('Press play when you are done'), scope.playSound('13.wav')],
-                  8: [print('The negative port is now buzzing. Please connect your probe to the port.'), scope.playSound('14.wav'), scope.buzzMotor(measurementMode.MOTOR), scope.clearDisplay(), scope.displayText("BUZZ!",True,60,40,14), scope.displayText("Connect + Port",True,25,55,14), scope.displayText(bd_menu,True,8,110,12),     print('Press play when you are done'), scope.playSound('13.wav')],
-                  9: [print('You are now ready to begin measuring. Press play when you are ready.'), scope.playSound('15.wav'), scope.clearDisplay(), scope.displayText("READY!",False,0,0,16)],
-                  10: [scope.displayText(value,False,0,0,14), scope.displayText(bd_menu,True,8,110,12), scope.createWav(value, 'measurement'), time.sleep(4), scope.playSound('measurement.wav')] #add voice for play = take another measurement, next = repeat measurement, home = home
-              }
-
     currentState = 0
     while True:
         if currentState >= 1 and currentState <= 6:
             measurementMode = measurementModes[currentState - 1]
-        for i in stateTasks[currentState]:
-            stateTasks[currentState][i]
+        
+        if currentState < 10:
+            state = basicState[currentState]
+            state[3](scope,measurementMode)
+        else:
+            state = basicState[currentState]
+            state[3](scope,measurementMode,value)
+
         if currentState == 9:
             value = measuring(scope,measurementMode,i2cBus)
             print(value)
