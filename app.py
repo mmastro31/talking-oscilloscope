@@ -371,7 +371,6 @@ def measuring(scope, measurementMode, i2cBus):
 def monitorSwitch(scope,i2cBus):
     global currentMode
     while True:
-        l1.acquire()
         mode = scope.readButton(i2cBus, 'B', 3)
         if mode == 1 and currentMode == 0:
             currentMode = 1
@@ -379,7 +378,6 @@ def monitorSwitch(scope,i2cBus):
         elif mode == 0 and currentMode == 1:
             currentMode = 0
             advancedMode(scope,i2cBus)
-        l1.release()
         time.sleep(0.5)
 
 
