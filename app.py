@@ -72,7 +72,7 @@ def basicButtons(scope,i2cBus):
     playPressed = 1
     nextPressed = 1
     while playPressed != 0 and homePressed != 0 and nextPressed != 0:
-        homePressed = scope.readButton(i2cBus, 'B', 0)
+        homePressed = scope.readButton(i2cBus, 'B', 4)
         time.sleep(0.01)
         playPressed = scope.readButton(i2cBus, 'B', 1)
         time.sleep(0.01)
@@ -172,8 +172,17 @@ def basicMode(scope,i2cBus):
         else:
             state = basicState[currentState]
             state[3](scope,measurementMode,value)
+ 
+        nextTask = basicButtons(scope,i2cBus)
+        if nextTask[0] == 0:
+            nextState = basicState[currentState][0]
+        elif nextTask[1] == 0:
+            nextState = basicState[currentState][1]
+        elif nextTask[2] == 0:
+            nextState = basicState[currentState][2]
+        currentState = nextState
 
-        if currentState == 9:
+        if currentState == 10:
             value = measuring(scope,measurementMode,i2cBus)
             print(value)
             scope.clearDisplay()
@@ -191,15 +200,7 @@ def basicMode(scope,i2cBus):
                     value = str(value)
                     value += " mA"
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
-                    value = str(value) 
-        nextTask = basicButtons(scope,i2cBus)
-        if nextTask[0] == 0:
-            nextState = basicState[currentState][0]
-        elif nextTask[1] == 0:
-            nextState = basicState[currentState][1]
-        elif nextTask[2] == 0:
-            nextState = basicState[currentState][2]
-        currentState = nextState
+                    value = str(value)
 
     '''
     global buttonPressed

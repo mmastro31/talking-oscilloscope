@@ -424,6 +424,7 @@ class Oscilloscope:
         self.setPinDir(i2cBus,'B', 1, 1, pullup=True)
         self.setPinDir(i2cBus,'B', 2, 1, pullup=True)
         self.setPinDir(i2cBus,'B', 3, 1, pullup=True)
+        self.setPinDir(i2cBus,'B', 4, 1, pullup=True)
 
     def readButton(self,i2cBus, AorB, pin):
 
