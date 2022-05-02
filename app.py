@@ -84,47 +84,55 @@ def state0(scope,measurementMode):
     scope.clearDisplay()
     scope.displayText("You are currently in",True,10,40,14)
     scope.displayText("Basic Mode",True,40,55,14)
-    scope.displayText(bd_menu,True,8,110,12),print('Basic Mode selected. Press play when ready.')
-    scope.playSound('7.wav')
+    scope.displayText(bd_menu,True,8,110,12)
+    text = 'Basic Mode selected. Press play when ready.'
+    print(text)
+    scope.playSound(text)
 
 def state1to6(scope,measurementMode):
-    print(measurementMode.NAME + ' selected. Press next to select next measurement mode or press play')
-    scope.playSound(measurementMode.GO_NEXT)
+    text = measurementMode.NAME + ' selected. Press next to select next measurement mode or press play'
+    print(text)
+    scope.playSound(text)
     scope.clearDisplay()
     scope.displayText(measurementMode.NAME,False,0,0,14) 
     scope.displayText(bd_menu,True,8,110,12)
 
 def state7(scope,measurementMode):
-    scope.playSound(measurementMode.WELCOME)
-    print('Welcome to ' + measurementMode.NAME)
+    text = 'Welcome to ' + measurementMode.NAME
+    print(text)
+    scope.playSound(text)
     scope.clearDisplay()
     scope.displayText(measurementMode.NAME,False,0,0,14)
     scope.displayText("Selected",True,50,70,14)
     scope.displayText(bd_menu,True,8,110,12)
-    scope.playSound('12.wav')
-    print('The positive port is now buzzing. Please connect your probe to the port.')
+    text = 'The positive port is now buzzing. Please connect your probe to the port.'
+    scope.playSound(text)
+    print(text)
     scope.buzzMotor(measurementMode.MOTOR)
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)
     scope.displayText("Connect + Port",True,25,55,14)
     scope.displayText(bd_menu,True,8,110,12)
-    print('Press play when you are done')
-    scope.playSound('13.wav')
+    text = 'Press play when you are done'
+    scope.playSound(text)
 
 def state8(scope,measurementMode):
-    print('The negative port is now buzzing. Please connect your probe to the port.')
-    scope.playSound('14.wav')
+    text = 'The negative port is now buzzing. Please connect your probe to the port.'
+    print(text)
+    scope.playSound(text)
     scope.buzzMotor(measurementMode.MOTOR)
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)
     scope.displayText("Connect + Port",True,25,55,14)
     scope.displayText(bd_menu,True,8,110,12)
-    print('Press play when you are done')
-    scope.playSound('13.wav')
+    text = 'Press play when you are done'
+    print(text)
+    scope.playSound(text)
 
 def state9(scope,measurementMode):
-    print('You are now ready to begin measuring. Press play when you are ready.')
-    scope.playSound('15.wav')
+    text = 'You are now ready to begin measuring. Press play when you are ready.'
+    print(text)
+    scope.playSound(text)
     scope.clearDisplay()
     scope.displayText("READY!",False,0,0,16)
 

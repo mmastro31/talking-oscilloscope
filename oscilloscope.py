@@ -140,8 +140,10 @@ class Oscilloscope:
 
 
     # queues up and starts audio
-    def playSound(self, filename):
+    def playSound(self, text):
 
+        os.system('festival  -b \'(voice_cmu_us_slt_arctic_hts)\' \'(SayText "' + text + '")\'') 
+        '''
         sound = self.mixer.Sound(filename)
 
         try:
@@ -152,6 +154,7 @@ class Oscilloscope:
             return
             
         #self.mixer.music.play(loops = 0)
+        '''
 
     # pauses any playing audio
     def pauseSound(self):
@@ -185,7 +188,7 @@ class Oscilloscope:
     def createWav(self, text, save_to):
 
         os.system('festival  -b \'(voice_cmu_us_slt_arctic_hts)\' \'(SayText "' + text + '")\'') 
-        
+
         '''
 
         temp_file = '/{}.txt'.format(uuid.uuid4())
