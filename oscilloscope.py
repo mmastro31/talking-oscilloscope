@@ -184,14 +184,20 @@ class Oscilloscope:
 
     def createWav(self, text, save_to):
 
-        temp_file = '/tmp' + '/{}.txt'.format(uuid.uuid4())
+        os.system('festival  -b \'(voice_cmu_us_slt_arctic_hts)\' \'(SayText "' + text + '")\'') 
+        
+        '''
+
+        temp_file = '/{}.txt'.format(uuid.uuid4())
         if not save_to:
-            save_to = '/tmp' + '/{}.wav'.format(uuid.uuid4())
+            save_to = '/{}.wav'.format(uuid.uuid4())
         with open(temp_file, 'w') as f:
             f.write(text)
         os.system('text2wave -o {out_fn} {in_fn}'.format(
             out_fn=save_to, in_fn=temp_file))
-            
+
+        '''
+
         return 
 
     #------------Motors-------------------
