@@ -1,3 +1,4 @@
+from pydoc import text
 import oscilloscope
 from flask import Flask
 import board
@@ -142,7 +143,9 @@ def state10(scope,measurementMode,value,measure_flag):
     scope.createWav(value, 'measurement')
     time.sleep(4)
     #scope.playSound('/tmp/measurement.wav')
-    print('Press Home to go home. Press Play to take another measurement. Press next to replay measurement')
+    text = 'Press Home to go home. Press Play to take another measurement. Press next to replay measurement'
+    print(text)
+    scope.playSound(text)
 
           #home, play, next,  function call
 basicState = { 0: [0,1,0,state0], #0 - press play when ready
