@@ -133,7 +133,7 @@ def state10(scope,measurementMode,value,measure_flag):
     scope.displayText(bd_menu,True,8,110,12)
     if measure_flag == False:
         scope.createWav(value, 'measurement')
-    time.sleep(5)
+    time.sleep(10)
     scope.playSound('measurement.wav')
     print('Press Home to go home. Press Play to take another measurement. Press next to replay measurement')
 
@@ -186,7 +186,7 @@ def basicMode(scope,i2cBus):
             nextState = basicState[currentState][2]
         currentState = nextState
 
-        if currentState == 10 and not measure_flag:
+        if currentState == 10 and measure_flag == False:
             value = measuring(scope,measurementMode,i2cBus)
             print(value)
             scope.clearDisplay()
