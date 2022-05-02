@@ -128,12 +128,14 @@ def state9(scope,measurementMode):
     scope.clearDisplay()
     scope.displayText("READY!",False,0,0,16)
 
-def state10(scope,measuremntMode,value):
+def state10(scope,measurementMode,value,measure_flag):
+    if not measure_flag:
+        scope.createWav(value, 'measurement')
     scope.displayText(value,False,0,0,14)
     scope.displayText(bd_menu,True,8,110,12)
-    scope.createWav(value, 'measurement')
     time.sleep(4)
     scope.playSound('measurement.wav')
+    print('Press Home to go home. Press Play to take another measurement. Press next to replay measurement')
 
           #home, play, next,  function call
 basicState = { 0: [0,1,0,state0], #0 - press play when ready
@@ -160,6 +162,7 @@ def basicMode(scope,i2cBus):
 
     measurementMode = measurementModes[0]
     value = None
+    measure_flag = False
 
     currentState = 0
     while True:
@@ -167,11 +170,12 @@ def basicMode(scope,i2cBus):
             measurementMode = measurementModes[currentState - 1]
         
         if currentState < 10:
+            measure_flag = False
             state = basicState[currentState]
             state[3](scope,measurementMode)
         else:
             state = basicState[currentState]
-            state[3](scope,measurementMode,value)
+            state[3](scope,measurementMode,value,measure_flag)
  
         nextTask = basicButtons(scope,i2cBus)
         if nextTask[0] == 0:
@@ -182,7 +186,7 @@ def basicMode(scope,i2cBus):
             nextState = basicState[currentState][2]
         currentState = nextState
 
-        if currentState == 10:
+        if currentState == 10 and not measure_flag:
             value = measuring(scope,measurementMode,i2cBus)
             print(value)
             scope.clearDisplay()
@@ -201,6 +205,7 @@ def basicMode(scope,i2cBus):
                     value += " mA"
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
                     value = str(value)
+            measure_flag = True
 
     '''
     global buttonPressed
