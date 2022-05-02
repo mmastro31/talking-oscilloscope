@@ -11,6 +11,7 @@ import pygame as pg
 import RPi.GPIO as GPIO
 import smbus
 import pyttsx3
+import uuid
 
 
 
@@ -181,15 +182,16 @@ class Oscilloscope:
     def stopSound(self):
         self.mixer.stop()
 
-    def createWav(self, text, name):
+    def createWav(self, text, save_to):
 
-        file = name + '.wav'
-
-        try:
-            self.engine.save_to_file(text , file)
-        except:
-            print("Engine not set up")
-        self.engine.runAndWait()
+        temp_file = '/tmp' + '/{}.txt'.format(uuid.uuid4())
+        if not save_to:
+            save_to = '/tmp' + '/{}.wav'.format(uuid.uuid4())
+        with open(temp_file, 'w') as f:
+            f.write(text)
+        os.system('text2wave -o {out_fn} {in_fn}'.format(
+            out_fn=save_to, in_fn=temp_file))
+            
         return 
 
     #------------Motors-------------------
