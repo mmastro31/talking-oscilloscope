@@ -1,11 +1,14 @@
 from pydoc import text
+from tkinter import E
+from pandas import array
 import oscilloscope
 from flask import Flask
 import board
 import smbus
 from threading import Thread, Lock, Event
 import time
-
+import numpy as np
+from scipy.io.wavfile import write
 
 #app = Flask(__name__)
 
@@ -140,8 +143,11 @@ def state9(scope,measurementMode):
 def state10(scope,measurementMode,value,measure_flag):
     scope.displayText(value,False,0,0,14)
     scope.displayText(bd_menu,True,8,110,12)
-    scope.createWav(value, 'measurement')
-    time.sleep(4)
+    if isinstance(value, int) or isinstance(value, float):
+        scope.playSound(value)
+    elif isinstance(value,np.array):
+        scope.playWav('example.wav')
+    time.sleep(1)
     #scope.playSound('/tmp/measurement.wav')
     text = 'Press Home to go home. Press Play to take another measurement. Press next to replay measurement'
     print(text)
@@ -159,6 +165,14 @@ basicState = { 0: [0,1,0,state0], #0 - press play when ready
               8: [0,9,8,state8], #8 - connect probe 2
               9: [0,10,9,state9], #9 - wait to measure
               10: [0,9,10,state10]} #10 - done measuring
+
+def writeWave(input_array):
+    samplerate = 44100; fs = 100
+    t = np.linspace(0., 1., samplerate)
+    amplitude = np.iinfo(np.int16).max
+    data = amplitude * input_array
+    write("example.wav", samplerate, data.astype(np.int16))
+
 
 def basicMode(scope,i2cBus):
 
@@ -215,8 +229,46 @@ def basicMode(scope,i2cBus):
                     value += " mA"
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
                     value = str(value)
+            elif isinstance(value,np.array):
+                writeWave(value)
             measure_flag = True
 
+
+
+def advancedButtons(scope,i2cBus):
+    singleVoltage = 1
+    singleCurrent = 1
+    continuousVoltage = 1
+    continuousCurrent = 1
+    digital1 = 1
+    digital2 = 1
+    while singleVoltage != 0 and singleCurrent != 0 and continuousVoltage != 0 and continuousCurrent != 0 and digital1 != 0 and digital2 != 0:
+        singleVoltage = scope.readButton(i2cBus, 'A', 0)
+        time.sleep(0.01)
+        singleCurrent = scope.readButton(i2cBus, 'A', 1)
+        time.sleep(0.01)
+        continuousVoltage = scope.readButton(i2cBus, 'A', 2)
+        time.sleep(0.01)
+        continuousCurrent = scope.readButton(i2cBus, 'A', 3)
+        time.sleep(0.01)
+        digital1 = scope.readButton(i2cBus, 'A', 4)
+        time.sleep(0.01)
+        digital2 = scope.readButton(i2cBus, 'A', 5)
+        time.sleep(0.01)
+
+    if singleVoltage == 0:
+        return SSV
+    elif singleCurrent == 0:
+        return SSC 
+    elif continuousVoltage == 0:
+        return CV
+    elif continuousCurrent == 0:
+        return CC
+    elif digital1 == 0:
+        return DIO1
+    elif digital2 == 0:
+        return DIO2
+    
 
 def advancedMode(scope,i2cBus):
     global currentMeasurementMode
@@ -224,14 +276,16 @@ def advancedMode(scope,i2cBus):
     scope.displayText("You are currently in",True,10,40,14)     #displays basic mode
     scope.displayText("Advanced Mode",True,35,55,14)
     scope.displayText(bd_menu,True,8,110,12)
-    time.sleep(3)
-    if currentMeasurementMode == None:
-        #First Time running program
-        print('Welcome to Advanced Mode. Please select a measurement')
-        e1.set()
-    else:
-        print('Advanced Mode selected')
-        e1.set()
+    text = 'Please select measurement mode.'
+    print(text)
+    scope.playSound(text)
+    measurementMode = advancedButtons(scope,i2cBus)
+    text = measurementMode.NAME + ' selected.'
+    print(text)
+    scope.playSound(text)
+
+
+
 
     
 
@@ -248,16 +302,22 @@ def measuring(scope, measurementMode, i2cBus):
             print('measuring SSC')
     elif measurementMode is CV or measurementMode is CC:
         playPressed = 1
-        value = []
+        value = np.array([])
+        text = 'Press play when you are done measuring'
+        scope.playSound(text)
+        print(text)
         while playPressed != 0:
             playPressed = scope.readButton(i2cBus, 'B', 1)
             if measurementMode is CV:
                 temp = scope.measureVoltage()
             elif measurementMode is CC:
                 temp = scope.measureCurrent()
-            value.append(temp)    
+            value.append(temp)
+            time.sleep(0.01)
         print('Continuous Measurement Taken')
         print(value)
+        writeWave(value)
+
     elif measurementMode is DIO1 or measurementMode is DIO2:
         value = scope.readDigitalPin()
         print('measuring DIO')

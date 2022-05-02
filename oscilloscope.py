@@ -138,12 +138,7 @@ class Oscilloscope:
         soundLevel = self.checkVolume()
         self.mixer.music.set_volume(0.2)
 
-
-    # queues up and starts audio
-    def playSound(self, text):
-
-        os.system('festival  -b \'(voice_cmu_us_slt_arctic_hts)\' \'(SayText "' + text + '")\'') 
-        '''
+    def playWav(self, filename):
         sound = self.mixer.Sound(filename)
 
         try:
@@ -154,7 +149,12 @@ class Oscilloscope:
             return
             
         #self.mixer.music.play(loops = 0)
-        '''
+
+
+    # plays text through TTS
+    def playSound(self, text):
+
+        os.system('festival  -b \'(voice_cmu_us_slt_arctic_hts)\' \'(SayText "' + text + '")\'') 
 
     # pauses any playing audio
     def pauseSound(self):
