@@ -1,6 +1,4 @@
-from pydoc import text
-from tkinter import E
-from pandas import array
+
 import oscilloscope
 from flask import Flask
 import board
