@@ -162,7 +162,8 @@ basicState = { 0: [0,1,0,state0], #0 - press play when ready
               7: [0,8,7,state7], #7 - connect probe 1
               8: [0,9,8,state8], #8 - connect probe 2
               9: [0,10,9,state9], #9 - wait to measure
-              10: [0,9,10,state10]} #10 - done measuring
+              10: [0,9,10,state10] #10 - done measuring
+              } 
 
 def writeWave(input_array):
     samplerate = 44100; fs = 100
@@ -266,7 +267,8 @@ def advancedButtons(scope,i2cBus):
         return DIO1
     elif digital2 == 0:
         return DIO2
-    
+
+
 
 def advancedMode(scope,i2cBus):
     global currentMeasurementMode
@@ -282,6 +284,16 @@ def advancedMode(scope,i2cBus):
     print(text)
     scope.playSound(text)
 
+    text = 'Press play when you are ready to begin measuring'
+    print(text)
+    scope.playSound(text)
+    pressed = basicButtons(scope,i2cBus)
+    if pressed[0] == 0:
+        pass
+    elif pressed[1] == 0:
+        pass
+    elif pressed[2] == 0:
+        pass
 
 
 
@@ -378,7 +390,7 @@ if __name__ == "__main__":
     scope = oscilloscope.Oscilloscope()
     onStart(scope,i2c,spi,i2cBus)
 
-    currentMode = True  #scope.readButton(i2cBus, 'B', 3)
+    currentMode = scope.readButton(i2cBus, 'B', 3)
     #Starting Threads
     '''
     t1 = Thread(target = monitorSwitch, args=(scope,i2cBus))
