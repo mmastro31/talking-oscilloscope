@@ -136,7 +136,7 @@ class Oscilloscope:
         self.engine.setProperty('rate', 175)
         self.engine.setProperty('voice', 'english+f4')
         soundLevel = self.checkVolume()
-        self.mixer.music.set_volume(0.2)
+        self.mixer.music.set_volume(0.6)
 
     def playWav(self, filename):
         sound = self.mixer.Sound(filename)
