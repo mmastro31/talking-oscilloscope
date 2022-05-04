@@ -53,9 +53,9 @@ class ConversionTime:
 class Oscilloscope:
 
 
-    MOTOR_1_OUT = 22
+    MOTOR_1_OUT = 24
     MOTOR_2_OUT = 23
-    MOTOR_3_OUT = 24
+    MOTOR_3_OUT = 22
     MOTOR_4_OUT = 25
     MOTOR_1and2_EN = 5
     MOTOR_3and4_EN = 6
@@ -66,7 +66,7 @@ class Oscilloscope:
         4: MOTOR_4_OUT
         }
     DIO1 = 26
-    DIO2 = 16
+    DIO2 = 27
 
     MCP23017_ADDR  = 0x20  # Address of peripheral on I2C bus
     MCP23017_IODIR_A = 0x00  # IO direction configuration register address A
@@ -267,13 +267,13 @@ class Oscilloscope:
 
     def setupDisplay(self,spi):
         # Turn on the Backlight
-        self.backlight = digitalio.DigitalInOut(board.D25)
+        self.backlight = digitalio.DigitalInOut(board.D17)
         self.backlight.switch_to_output()
         self.backlight.value = True
 
         # Configuration for CS and DC pins (these are PiTFT defaults):
         cs_pin = digitalio.DigitalInOut(board.CE0)
-        dc_pin = digitalio.DigitalInOut(board.D25)
+        dc_pin = digitalio.DigitalInOut(board.D17)
         reset_pin = digitalio.DigitalInOut(board.D16)
 
         # Config for display baudrate (default max is 24mhz):
