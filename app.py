@@ -143,7 +143,7 @@ def state10(scope,measurementMode,value,measure_flag):
     scope.displayText(bd_menu,True,8,110,12)
     if isinstance(value, int) or isinstance(value, float):
         scope.playSound(value)
-    elif isinstance(value,np.array):
+    else:
         scope.playWav('example.wav')
     time.sleep(1)
     #scope.playSound('/tmp/measurement.wav')
