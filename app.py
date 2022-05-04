@@ -139,10 +139,10 @@ def state9(scope,measurementMode):
     scope.displayText("READY!",False,0,0,16)
 
 def state10(scope,measurementMode,value,measure_flag):
-    scope.displayText(value,False,0,0,14)
-    scope.displayText(bd_menu,True,8,110,12)
     if isinstance(value, str):
         scope.playSound(value)
+        scope.displayText(value,False,0,0,14)
+        scope.displayText(bd_menu,True,8,110,12)
     else:
         scope.playWav('example.wav')
     time.sleep(1)
