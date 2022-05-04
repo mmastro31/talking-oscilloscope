@@ -168,7 +168,8 @@ basicState = { 0: [0,1,0,state0], #0 - press play when ready
 
 def writeWave(input_array):
     time = 15
-    samples = input_array.size()
+    print(type(input_array))
+    samples = len(input_array)
     input_array = input_array * 1000
     samplerate = samples/time
     amplitude = np.iinfo(np.int16).max
