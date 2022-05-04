@@ -139,13 +139,13 @@ def state9(scope,measurementMode):
     scope.displayText("READY!",False,0,0,16)
 
 def state10(scope,measurementMode,value,measure_flag):
-    print("Entered State 10 bitch")
     if isinstance(value, str):
         scope.playSound(value)
         scope.displayText(value,False,0,0,14)
         scope.displayText(bd_menu,True,8,110,12)
     else:
-        scope.playWav('example.wav')
+        print('playing wav')
+        #scope.playWav('example.wav')
     time.sleep(1)
     #scope.playSound('/tmp/measurement.wav')
     text = 'Press Home to go home. Press Play to take another measurement. Press next to replay measurement'
@@ -297,7 +297,7 @@ def advancedState1(scope,measurementMode):
     scope.buzzMotor(measurementMode.MOTOR)
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)
-    scope.displayText("Connect - Port",True,25,55,14)
+    scope.displayText("Connect + Port",True,25,55,14)
     scope.displayText(bd_menu,True,8,110,12)
     text = 'The negative port is now buzzing. Please connect your probe to the port.'
     print(text)
@@ -305,11 +305,13 @@ def advancedState1(scope,measurementMode):
     scope.buzzMotor(measurementMode.MOTOR)
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)
-    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText("Connect - Port",True,25,55,14)
     scope.displayText(bd_menu,True,8,110,12)
     text = 'Press play when you are ready to begin measuring.'
     print(text)
     scope.playSound(text)
+    scope.clearDisplay()
+    scope.displayText("READY!",False,0,0,16)
 
 advancedStates = {
     0: [0,0,0,1,advancedState0],
