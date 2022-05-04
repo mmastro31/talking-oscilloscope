@@ -125,7 +125,7 @@ def state8(scope,measurementMode):
     scope.buzzMotor(measurementMode.MOTOR)
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)
-    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText("Connect - Port",True,25,55,14)
     scope.displayText(bd_menu,True,8,110,12)
     text = 'Press play when you are done'
     print(text)
@@ -167,8 +167,10 @@ basicState = { 0: [0,1,0,state0], #0 - press play when ready
 
 
 def writeWave(input_array):
-    samplerate = 44100; fs = 100
-    t = np.linspace(0., 1., samplerate)
+    time = 15
+    samples = input_array.size()
+    input_array = input_array * 1000
+    samplerate = samples/time
     amplitude = np.iinfo(np.int16).max
     data = amplitude * input_array
     write("example.wav", samplerate, data.astype(np.int16))
@@ -294,7 +296,7 @@ def advancedState1(scope,measurementMode):
     scope.buzzMotor(measurementMode.MOTOR)
     scope.clearDisplay()
     scope.displayText("BUZZ!",True,60,40,14)
-    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText("Connect - Port",True,25,55,14)
     scope.displayText(bd_menu,True,8,110,12)
     time.sleep(2)
     text = 'The negative port is now buzzing. Please connect your probe to the port.'
@@ -394,13 +396,9 @@ def measuring(scope, measurementMode, i2cBus):
             value = scope.measureCurrent()
             print('measuring SSC')
     elif measurementMode is CV or measurementMode is CC:
-        playPressed = 1
         value = []
-        text = 'Press play when you are done measuring'
-        scope.playSound(text)
-        print(text)
-        while playPressed != 0:
-            playPressed = scope.readButton(i2cBus, 'B', 1)
+        t_end = time.time() + 15
+        while time.time() < t_end:
             if measurementMode is CV:
                 temp = scope.measureVoltage()
             elif measurementMode is CC:

@@ -431,7 +431,7 @@ class Oscilloscope:
         self.setPinDir(i2cBus,'A', 3, 1, pullup=True)
         self.setPinDir(i2cBus,'A', 4, 1, pullup=True)
         self.setPinDir(i2cBus,'A', 5, 1, pullup=True)
-        self.setPinDir(i2cBus, 'A' , 6, 1, pullup= True)
+        self.setPinDir(i2cBus,'A', 6, 1, pullup=True)
         self.setPinDir(i2cBus,'B', 0, 1, pullup=True)
         self.setPinDir(i2cBus,'B', 1, 1, pullup=True)
         self.setPinDir(i2cBus,'B', 2, 1, pullup=True)
