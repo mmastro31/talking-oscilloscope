@@ -132,11 +132,11 @@ class Oscilloscope:
         buffer=2048
         self.mixer = pg.mixer
         self.mixer.init(freq, bitsize, channels, buffer)
-        # default starting volume will be 20%
+        # default starting volume will be 60%
         self.engine.setProperty('rate', 175)
         self.engine.setProperty('voice', 'english+f4')
         soundLevel = self.checkVolume()
-        self.mixer.music.set_volume(0.6)
+        self.mixer.music.set_volume(1.0)
 
     def playWav(self, filename):
         sound = self.mixer.Sound(filename)
