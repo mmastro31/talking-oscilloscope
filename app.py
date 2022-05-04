@@ -139,6 +139,7 @@ def state9(scope,measurementMode):
     scope.displayText("READY!",False,0,0,16)
 
 def state10(scope,measurementMode,value,measure_flag):
+    print("Entered State 10 bitch")
     if isinstance(value, str):
         scope.playSound(value)
         scope.displayText(value,False,0,0,14)
@@ -168,7 +169,7 @@ basicState = { 0: [0,1,0,state0], #0 - press play when ready
 
 def writeWave(input_array):
     time = 15
-    print(type(input_array))
+    #print(type(input_array))
     samples = len(input_array)
     input_array = input_array * 1000
     samplerate = int(samples/time)
@@ -178,7 +179,6 @@ def writeWave(input_array):
 
 
 def basicMode(scope,i2cBus):
-
     '''
     1. enter basic state
     2. do tasks related to state
@@ -299,7 +299,6 @@ def advancedState1(scope,measurementMode):
     scope.displayText("BUZZ!",True,60,40,14)
     scope.displayText("Connect - Port",True,25,55,14)
     scope.displayText(bd_menu,True,8,110,12)
-    time.sleep(2)
     text = 'The negative port is now buzzing. Please connect your probe to the port.'
     print(text)
     scope.playSound(text)
@@ -331,13 +330,13 @@ def advancedMode(scope,i2cBus):
     currentState = 0
 
     while True:
-        if currentState == 0:
+        if currentState == 0: #Boots
             state = advancedStates[currentState]
             state[4](scope)
             measure_index = advancedButtons(scope,i2cBus)
             measurementMode = measurementModes[measure_index]
             nextState = state[3]
-        elif currentState == 1:
+        elif currentState == 1: #Selected and probing
             state = advancedStates[currentState]
             state[4](scope,measurementMode)
             nextTask = basicButtons(scope,i2cBus)
@@ -347,7 +346,7 @@ def advancedMode(scope,i2cBus):
                 nextState = state[1]  #go to next
             elif nextTask[2] == 0:
                 nextState = state[2]  #replay
-        elif currentState == 2:
+        elif currentState == 2: #After taking measurement
             state = advancedStates[currentState]
             state[4](scope,measurementMode,value,measure_flag)
             nextTask = basicButtons(scope,i2cBus)
