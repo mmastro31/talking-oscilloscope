@@ -229,8 +229,6 @@ def basicMode(scope,i2cBus):
                     value += " mA"
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
                     value = str(value)
-            else:
-                writeWave(value)
             measure_flag = True
 
 
@@ -379,8 +377,6 @@ def advancedMode(scope,i2cBus):
                     value += " mA"
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
                     value = str(value)
-            elif isinstance(value,np.array):
-                writeWave(value)
             measure_flag = True
 
 
@@ -399,7 +395,7 @@ def measuring(scope, measurementMode, i2cBus):
             print('measuring SSC')
     elif measurementMode is CV or measurementMode is CC:
         playPressed = 1
-        value = np.array([])
+        value = []
         text = 'Press play when you are done measuring'
         scope.playSound(text)
         print(text)
@@ -413,7 +409,8 @@ def measuring(scope, measurementMode, i2cBus):
             time.sleep(0.01)
         print('Continuous Measurement Taken')
         print(value)
-        writeWave(value)
+        value_array = np.array(value)
+        writeWave(value_array)
 
     elif measurementMode is DIO1 or measurementMode is DIO2:
         value = scope.readDigitalPin()
