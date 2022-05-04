@@ -244,7 +244,7 @@ def advancedButtons(scope,i2cBus):
     homePressed = 1
     nextPressed = 1
     while singleVoltage != 0 and singleCurrent != 0 and continuousVoltage != 0 and continuousCurrent != 0 and digital1 != 0 and digital2 != 0:
-        singleVoltage = scope.readButton(i2cBus, 'A', 0)
+        singleVoltage = scope.readButton(i2cBus, 'A', 6)
         time.sleep(0.01)
         singleCurrent = scope.readButton(i2cBus, 'A', 1)
         time.sleep(0.01)
