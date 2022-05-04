@@ -145,7 +145,7 @@ def state10(scope,measurementMode,value,measure_flag):
         scope.displayText(bd_menu,True,8,110,12)
     else:
         print('playing wav')
-        #scope.playWav('example.wav')
+        #scope.playWav("example.wav")
     time.sleep(1)
     #scope.playSound('/tmp/measurement.wav')
     text = 'Press Home to go home. Press Play to take another measurement. Press next to replay measurement'
