@@ -171,7 +171,7 @@ def writeWave(input_array):
     print(type(input_array))
     samples = len(input_array)
     input_array = input_array * 1000
-    samplerate = samples/time
+    samplerate = int(samples/time)
     amplitude = np.iinfo(np.int16).max
     data = amplitude * input_array
     write("example.wav", samplerate, data.astype(np.int16))
