@@ -229,7 +229,7 @@ def basicMode(scope,i2cBus):
                     value += " mA"
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
                     value = str(value)
-            elif isinstance(value,np.array):
+            else:
                 writeWave(value)
             measure_flag = True
 
