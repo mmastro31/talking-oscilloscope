@@ -18,13 +18,14 @@ global currentMeasurementMode
 currentMeasurementMode = None
 global buttonPressed
 buttonPressed = None
-global bd_menu      #Button Display Menu - just to print the buttons at the bottom of the display like a mini menu
+
+
+#Button Display Menu - just to print the buttons at the bottom of the display like a mini menu
+global bd_menu  
 bd_menu = "Home       Play       Next"
 
-e1 = Event()
-e2 = Event()
-l1 = Lock()  #lock to control i2c bus
-
+#Classes for each measurement mode
+#Each component points to correpsonding wave files and text to condense coding required later
 class SSV:
     NAME = 'Single Shot Voltage'
     FILE = '1.wav'
@@ -67,8 +68,11 @@ class DIO2:
     GO_NEXT = '21.wav'
     WELCOME = '27.wav'
 
+#for indexing
 measurementModes = [SSV, SSC, CV, CC, DIO1, DIO2]
 
+#monitors all basic buttons (Home,Play,Next)
+#Waits until button is pressed
 def basicButtons(scope,i2cBus):
     homePressed = 1
     playPressed = 1
@@ -82,6 +86,47 @@ def basicButtons(scope,i2cBus):
         time.sleep(0.01)
     return (homePressed, playPressed, nextPressed)
 
+#Monitors all advanced buttons when called and waits for a button to be pressed
+#Returns button pressed
+def advancedButtons(scope,i2cBus):
+    singleVoltage = 1
+    singleCurrent = 1
+    continuousVoltage = 1
+    continuousCurrent = 1
+    digital1 = 1
+    digital2 = 1
+    playPressed = 1
+    homePressed = 1
+    nextPressed = 1
+    while singleVoltage != 0 and singleCurrent != 0 and continuousVoltage != 0 and continuousCurrent != 0 and digital1 != 0 and digital2 != 0:
+        singleVoltage = scope.readButton(i2cBus, 'A', 6)
+        time.sleep(0.01)
+        singleCurrent = scope.readButton(i2cBus, 'A', 1)
+        time.sleep(0.01)
+        continuousVoltage = scope.readButton(i2cBus, 'A', 2)
+        time.sleep(0.01)
+        continuousCurrent = scope.readButton(i2cBus, 'A', 3)
+        time.sleep(0.01)
+        digital1 = scope.readButton(i2cBus, 'A', 4)
+        time.sleep(0.01)
+        digital2 = scope.readButton(i2cBus, 'A', 5)
+        time.sleep(0.01)
+
+    if singleVoltage == 0:
+        return 0
+    elif singleCurrent == 0:
+        return 1
+    elif continuousVoltage == 0:
+        return 2
+    elif continuousCurrent == 0:
+        return 3
+    elif digital1 == 0:
+        return 4
+    elif digital2 == 0:
+        return 5
+
+#Below are all the states used in basic and advanced mode
+#These are used for easy navigation between buttons
 def state0(scope,measurementMode):
     scope.clearDisplay()
     scope.displayText("You are currently in",True,10,40,14)
@@ -152,6 +197,46 @@ def state10(scope,measurementMode,value,measure_flag):
     print(text)
     scope.playSound(text)
 
+def advancedState0(scope):
+    scope.clearDisplay()
+    scope.displayText("You are currently in",True,10,40,14)     #displays basic mode
+    scope.displayText("Advanced Mode",True,35,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    text = 'You are currently in advanced mode. Please select measurement mode.'
+    print(text)
+    scope.playSound(text)
+
+def advancedState1(scope,measurementMode):
+    text = 'Welcome to ' + measurementMode.NAME
+    print(text)
+    scope.playSound(text)
+    scope.clearDisplay()
+    scope.displayText(measurementMode.NAME,False,0,0,14)
+    scope.displayText("Selected",True,50,70,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    text = 'The positive port is now buzzing. Please connect your probe to the port.'
+    scope.playSound(text)
+    print(text)
+    scope.buzzMotor(measurementMode.MOTOR)
+    scope.clearDisplay()
+    scope.displayText("BUZZ!",True,60,40,14)
+    scope.displayText("Connect + Port",True,25,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    text = 'The negative port is now buzzing. Please connect your probe to the port.'
+    print(text)
+    scope.playSound(text)
+    scope.buzzMotor(measurementMode.MOTOR)
+    scope.clearDisplay()
+    scope.displayText("BUZZ!",True,60,40,14)
+    scope.displayText("Connect - Port",True,25,55,14)
+    scope.displayText(bd_menu,True,8,110,12)
+    text = 'Press play when you are ready to begin measuring.'
+    print(text)
+    scope.playSound(text)
+    scope.clearDisplay()
+    scope.displayText("READY!",False,0,0,16)
+
+
           #home, play, next,  function call
 basicState = { 0: [0,1,0,state0], #0 - press play when ready
                1: [0,7,2,state1to6], #1 - SSV
@@ -166,7 +251,16 @@ basicState = { 0: [0,1,0,state0], #0 - press play when ready
               10: [0,9,10,state10] #10 - done measuring
               } 
 
+#      home,play,next, function call
+advancedStates = {
+    0: [0,0,0,1,advancedState0],
+    1: [0,2,1,0,advancedState1],
+    2: [0,2,2,0,state10]
+}
 
+
+#CURRENTLY NOT WORKING
+#Writes wave file for input array in continuous mode
 def writeWave(input_array):
     time = 15
     #print(type(input_array))
@@ -176,6 +270,7 @@ def writeWave(input_array):
     amplitude = np.iinfo(np.int16).max
     data = amplitude * input_array
     write("example.wav", samplerate, data.astype(np.int16))
+
 
 
 def basicMode(scope,i2cBus):
@@ -233,92 +328,6 @@ def basicMode(scope,i2cBus):
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
                     value = str(value)
             measure_flag = True
-
-
-
-def advancedButtons(scope,i2cBus):
-    singleVoltage = 1
-    singleCurrent = 1
-    continuousVoltage = 1
-    continuousCurrent = 1
-    digital1 = 1
-    digital2 = 1
-    playPressed = 1
-    homePressed = 1
-    nextPressed = 1
-    while singleVoltage != 0 and singleCurrent != 0 and continuousVoltage != 0 and continuousCurrent != 0 and digital1 != 0 and digital2 != 0:
-        singleVoltage = scope.readButton(i2cBus, 'A', 6)
-        time.sleep(0.01)
-        singleCurrent = scope.readButton(i2cBus, 'A', 1)
-        time.sleep(0.01)
-        continuousVoltage = scope.readButton(i2cBus, 'A', 2)
-        time.sleep(0.01)
-        continuousCurrent = scope.readButton(i2cBus, 'A', 3)
-        time.sleep(0.01)
-        digital1 = scope.readButton(i2cBus, 'A', 4)
-        time.sleep(0.01)
-        digital2 = scope.readButton(i2cBus, 'A', 5)
-        time.sleep(0.01)
-
-    if singleVoltage == 0:
-        return 0
-    elif singleCurrent == 0:
-        return 1
-    elif continuousVoltage == 0:
-        return 2
-    elif continuousCurrent == 0:
-        return 3
-    elif digital1 == 0:
-        return 4
-    elif digital2 == 0:
-        return 5
-
-
-def advancedState0(scope):
-    scope.clearDisplay()
-    scope.displayText("You are currently in",True,10,40,14)     #displays basic mode
-    scope.displayText("Advanced Mode",True,35,55,14)
-    scope.displayText(bd_menu,True,8,110,12)
-    text = 'You are currently in advanced mode. Please select measurement mode.'
-    print(text)
-    scope.playSound(text)
-
-def advancedState1(scope,measurementMode):
-    text = 'Welcome to ' + measurementMode.NAME
-    print(text)
-    scope.playSound(text)
-    scope.clearDisplay()
-    scope.displayText(measurementMode.NAME,False,0,0,14)
-    scope.displayText("Selected",True,50,70,14)
-    scope.displayText(bd_menu,True,8,110,12)
-    text = 'The positive port is now buzzing. Please connect your probe to the port.'
-    scope.playSound(text)
-    print(text)
-    scope.buzzMotor(measurementMode.MOTOR)
-    scope.clearDisplay()
-    scope.displayText("BUZZ!",True,60,40,14)
-    scope.displayText("Connect + Port",True,25,55,14)
-    scope.displayText(bd_menu,True,8,110,12)
-    text = 'The negative port is now buzzing. Please connect your probe to the port.'
-    print(text)
-    scope.playSound(text)
-    scope.buzzMotor(measurementMode.MOTOR)
-    scope.clearDisplay()
-    scope.displayText("BUZZ!",True,60,40,14)
-    scope.displayText("Connect - Port",True,25,55,14)
-    scope.displayText(bd_menu,True,8,110,12)
-    text = 'Press play when you are ready to begin measuring.'
-    print(text)
-    scope.playSound(text)
-    scope.clearDisplay()
-    scope.displayText("READY!",False,0,0,16)
-
-advancedStates = {
-    0: [0,0,0,1,advancedState0],
-    1: [0,2,1,0,advancedState1],
-    2: [0,2,2,0,state10]
-}
-
 
 
 def advancedMode(scope,i2cBus):
@@ -384,9 +393,6 @@ def advancedMode(scope,i2cBus):
             measure_flag = True
 
 
-
-
-
 def measuring(scope, measurementMode, i2cBus):
     value = 0
     time.sleep(1)
@@ -419,21 +425,6 @@ def measuring(scope, measurementMode, i2cBus):
     return value
 
 
-
-#Monitors if Switch is moved every 1 second
-def monitorSwitch(scope,i2cBus):
-    global currentMode
-    while True:
-        mode = scope.readButton(i2cBus, 'B', 3)
-        if mode == 1 and currentMode == 0:
-            currentMode = 1
-            basicMode(scope,i2cBus)
-        elif mode == 0 and currentMode == 1:
-            currentMode = 0
-            advancedMode(scope,i2cBus)
-        time.sleep(0.5)
-
-
 def onStart(scope,i2c,spi,i2cBus):
     scope.setupSound()
     scope.setupCurrentSensor(i2c)
@@ -448,7 +439,6 @@ def onStart(scope,i2c,spi,i2cBus):
     time.sleep(5)
 
 
-
 if __name__ == "__main__":
     #Set up all sensors and buttons on Pi
     i2c = board.I2C()
@@ -458,13 +448,6 @@ if __name__ == "__main__":
     onStart(scope,i2c,spi,i2cBus)
 
     currentMode = scope.readButton(i2cBus, 'B', 3)
-    #Starting Threads
-    '''
-    t1 = Thread(target = monitorSwitch, args=(scope,i2cBus))
-    t1.daemon = True
-    t1.start()
-    t1.join()
-    '''
 
     #Determine if Oscilloscope is in Basic or Advanced Mode based on switch placement
     if currentMode:
