@@ -1,6 +1,6 @@
-import oscilloscope
-import time
-import pyttsx3
+
+import matplotlib.pyplot as plt
+import random
 
 
 
@@ -34,13 +34,22 @@ lines = [
     'Welcome to Digital IO 2', #27
 ]
 
-scope = oscilloscope.Oscilloscope()
-scope.setupSound()
 
-scope.engine.setProperty('rate', 175)
-scope.engine.setProperty('voice', 'english+f4')
+#################### generate default graph ###########################
 
-scope.createWav(lines[16], '17')
-scope.engine.runAndWait()
 
-time.sleep(5)
+   
+x = []
+y = []
+for i in range(150):
+    time = 0.1 + (i * 0.1)
+    x.append(time)
+    y.append(0)
+
+  
+plt.plot(x, y, color='red', marker='o')
+plt.title('Oscilloscope', fontsize=14)
+plt.xlabel('time', fontsize=14)
+plt.ylabel('Volts', fontsize=14)
+plt.grid(True)
+plt.savefig('defaultGraph.png')

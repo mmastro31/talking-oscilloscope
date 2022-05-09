@@ -8,6 +8,7 @@ import time
 import numpy as np
 from scipy.io.wavfile import write
 from flask import Flask, redirect, render_template
+import matplotlib.pyplot as plt
 
 app = Flask(__name__, static_folder='assets')
 
@@ -20,6 +21,15 @@ currentMeasurementMode = None
 global buttonPressed
 buttonPressed = None
 
+
+global voltageLevel 
+voltageLevel = 0
+global currentLevel
+currentLevel = 0
+global powerLevel
+powerLevel = 0
+global currentGraph
+currentGraph = None
 
 #Button Display Menu - just to print the buttons at the bottom of the display like a mini menu
 global bd_menu  
@@ -400,6 +410,9 @@ def advancedMode(scope,i2cBus):
 
 
 def measuring(scope, measurementMode, i2cBus):
+    global voltageLevel
+    global currentLevel
+    global powerLevel
     value = 0
     time.sleep(1)
     if measurementMode is SSV or measurementMode is SSC:
@@ -421,16 +434,20 @@ def measuring(scope, measurementMode, i2cBus):
             time.sleep(0.01)
         print('Continuous Measurement Taken')
         print(value)
+        createGraph(value,measurementMode)
         value_array = np.array(value)
         temp = len(value)
         temp_array = value
         value = sum(temp_array) / temp
-
         writeWave(value_array)
 
     elif measurementMode is DIO1 or measurementMode is DIO2:
         value = scope.readDigitalPin()
         print('measuring DIO')
+
+    voltageLevel = scope.measureVoltage()
+    currentLevel = scope.measureCurrent()
+    powerLevel = scope.measurePower()
 
     return value
 
@@ -449,13 +466,43 @@ def onStart(scope,i2c,spi,i2cBus):
     time.sleep(5)
 
 
+def createGraph(value,measurementMode):
+    global currentGraph
+    x = []
+    y = value
+    for i in range(150):
+        time = 0.1 + (i * 0.1)
+        x.append(time)
+
+    plt.plot(x, y, color='red', marker='o')
+    plt.title('Oscilloscope', fontsize=14)
+    plt.xlabel('time', fontsize=14)
+    plt.ylabel('Volts', fontsize=14)
+    plt.grid(True)
+    plt.savefig('currentGraph.png')
+    currentGraph = 'currentGraph.png'
+
+
 @app.route('/')
 def home():
     return redirect('/templates/index')
 
 @app.route('/templates/index')
 def home_template():
-    render_template('index.html')
+    global voltageLevel
+    global currentLevel
+    global powerLevel
+    global currentGraph
+
+    defaultGraph = 'defaultGraph.png'
+
+    if currentGraph is None:
+        graph = defaultGraph
+    else:
+        graph = currentGraph
+        
+    render_template('index.html', voltage_level = voltageLevel, current_level = currentLevel, power_level = powerLevel, graph_display = graph)
+
 
 if __name__ == "__main__":
     #Set up all sensors and buttons on Pi
