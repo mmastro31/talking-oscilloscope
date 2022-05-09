@@ -500,14 +500,14 @@ def home_template():
         graph = defaultGraph
     else:
         graph = currentGraph
-        
+
     render_template('index.html', voltage_level = voltageLevel, current_level = currentLevel, power_level = powerLevel, graph_display = graph)
 
 
 if __name__ == "__main__":
     #Set up all sensors and buttons on Pi
 
-    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=5000)
 
     i2c = board.I2C()
     spi = board.SPI()
