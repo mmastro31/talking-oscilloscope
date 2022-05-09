@@ -382,10 +382,7 @@ def advancedMode(scope,i2cBus):
                 elif measurementMode.NAME == 'Single Shot Voltage' and value < 0.01:
                     value = str(value)
                     value += " mV"
-                elif measurementMode.NAME == 'Single Shot Current' and value >= 0.01:
-                    value = str(value)
-                    value += " A"
-                elif measurementMode.NAME == 'Single Shot Current' and value < 0.01:
+                elif measurementMode.NAME == 'Single Shot Current':
                     value = str(value)
                     value += " mA"
                 elif measurementMode.NAME == 'Digital IO 1' or measurementMode.NAME == 'Digital IO 2':
