@@ -316,12 +316,13 @@ def basicMode(scope,i2cBus):
             print(value)
             scope.clearDisplay()
             if isinstance(value, int) or isinstance(value, float):
-                if measurementMode.NAME == 'Single Shot Voltage' and value >= 0.01:
-                    value = str(value)
-                    value += " V"
-                elif measurementMode.NAME == 'Single Shot Voltage' and value < 0.01:
-                    value = str(value)
-                    value += " mV"
+                if measurementMode.NAME == 'Single Shot Voltage' or measurementMode.NAME == 'Continuous Voltage':
+                    if value >= 0.01:
+                        value = str(value)
+                        value += " V"
+                    elif value < 0.01:
+                        value = str(value)
+                        value += " mV"
                 elif measurementMode.NAME == 'Single Shot Current' and value >= 0.01:
                     value = str(value)
                     value += " A"
@@ -379,9 +380,13 @@ def advancedMode(scope,i2cBus):
             print(value)
             scope.clearDisplay()
             if isinstance(value, int) or isinstance(value, float):
-                if measurementMode.NAME == 'Single Shot Voltage' and value >= 0.01:
-                    value = str(value)
-                    value += " V"
+                if measurementMode.NAME == 'Single Shot Voltage' or measurementMode.NAME == 'Continuous Voltage':
+                    if value >= 0.01:
+                        value = str(value)
+                        value += " V"
+                    elif value < 0.01:
+                        value = str(value)
+                        value += " mV"
                 elif measurementMode.NAME == 'Single Shot Voltage' and value < 0.01:
                     value = str(value)
                     value += " mV"
