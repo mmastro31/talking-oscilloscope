@@ -416,6 +416,10 @@ def measuring(scope, measurementMode, i2cBus):
         print('Continuous Measurement Taken')
         print(value)
         value_array = np.array(value)
+        temp = len(value)
+        temp_array = value
+        value = sum(temp_array) / temp
+
         writeWave(value_array)
 
     elif measurementMode is DIO1 or measurementMode is DIO2:
