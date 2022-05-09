@@ -7,8 +7,9 @@ from threading import Thread, Lock, Event
 import time
 import numpy as np
 from scipy.io.wavfile import write
+from flask import Flask, redirect, render_template
 
-#app = Flask(__name__)
+app = Flask(__name__, static_folder='assets')
 
 
 #Current Mode that is selected (Basic/Advanced)
@@ -448,8 +449,19 @@ def onStart(scope,i2c,spi,i2cBus):
     time.sleep(5)
 
 
+@app.route('/')
+def home():
+    return redirect('/templates/index')
+
+@app.route('/templates/index')
+def home_template():
+    render_template('index.html')
+
 if __name__ == "__main__":
     #Set up all sensors and buttons on Pi
+
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+
     i2c = board.I2C()
     spi = board.SPI()
     i2cBus = smbus.SMBus(1)
@@ -463,6 +475,3 @@ if __name__ == "__main__":
         basicMode(scope,i2cBus)  #Enter Basic Mode
     else:
         advancedMode(scope,i2cBus) #Enter Advanced Mode
-
-
-    #app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
