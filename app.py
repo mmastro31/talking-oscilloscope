@@ -152,6 +152,9 @@ def state7(scope,measurementMode):
     scope.displayText(measurementMode.NAME,False,0,0,14)
     scope.displayText("Selected",True,50,70,14)
     scope.displayText(bd_menu,True,8,110,12)
+    text = 'Please ensure a common ground is connected to the device.'
+    scope.playSound(text)
+    print(text)
     text = 'The positive port is now buzzing. Please connect your probe to the port.'
     scope.playSound(text)
     print(text)
