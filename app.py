@@ -507,7 +507,7 @@ def home_template():
 if __name__ == "__main__":
     #Set up all sensors and buttons on Pi
 
-    app.run(host='0.0.0.0', port=5000)
+    #app.run(host='0.0.0.0', port=5000)
 
     i2c = board.I2C()
     spi = board.SPI()
