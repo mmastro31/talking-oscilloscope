@@ -503,12 +503,7 @@ def home_template():
 
     render_template('index.html', voltage_level = voltageLevel, current_level = currentLevel, power_level = powerLevel, graph_display = graph)
 
-
-if __name__ == "__main__":
     #Set up all sensors and buttons on Pi
-
-    #app.run(host='0.0.0.0', port=5000)
-
     i2c = board.I2C()
     spi = board.SPI()
     i2cBus = smbus.SMBus(1)
@@ -522,3 +517,7 @@ if __name__ == "__main__":
         basicMode(scope,i2cBus)  #Enter Basic Mode
     else:
         advancedMode(scope,i2cBus) #Enter Advanced Mode
+
+if __name__ == "__main__":
+
+    app.run(host='0.0.0.0', port=80)
